@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Models
+*.pt
+*.pth
+*.onnx
+
+# Training logs
+runs/
+logs/
+
+# Results
+results/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+
+# Cache
+.cache/
+
+# PyTorch
+*.ckpt
+
+# Temporary files
+*.tmp
+*.bak
