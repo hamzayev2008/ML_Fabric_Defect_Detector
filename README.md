@@ -1,6 +1,6 @@
 # ML_toy_detector
 
-An AI-powered computer vision project for detecting defective teddy bears in a toy factory.
+Computer vision project for detecting defective teddy bears in a toy factory.
 
 ## Overview
 
