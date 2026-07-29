@@ -1,0 +1,13 @@
+Dataset
+   │
+   ▼
+Resize
+   │
+   ▼
+Normalization
+   │
+   ▼
+Augmentation
+   │
+   ▼
+Train / Validation / Test
