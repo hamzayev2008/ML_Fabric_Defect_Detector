@@ -64,6 +64,7 @@ The dataset includes different teddy bear colors and defect types.
                  ▼
       Normal / Defective
       + Confidence Score
+```
 
 ## Project Structure
 
@@ -83,7 +84,6 @@ ML_toy_detector/
 └── LICENSE
 ```
 
-```markdown
 ## Project Workflow
 
 ```text
@@ -106,6 +106,7 @@ Evaluation
    │
    ▼
 Prediction
+```
 
 ---
 
@@ -146,7 +147,6 @@ The model will be evaluated using:
 
 ---
 
-```markdown
 ## Model Performance
 
 | Metric | Value |
@@ -166,6 +166,14 @@ Clone the repository
 git clone https://github.com/your_username/ML_toy_detector.git
 ```
 
+Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
 ## Repository Layout
 
 | Folder | Description |
@@ -177,21 +185,23 @@ git clone https://github.com/your_username/ML_toy_detector.git
 | notebooks | Experiments |
 | results | Training results and evaluation |
 
-Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
 ## Future Improvements
 
 - YOLO object detection
 - Defect localization
 - More training images
 - Better data augmentation
-- Web interface
+- Web interface  
+
+## Documentation
+
+Additional documentation can be found in the `docs/` directory:
+
+- System Architecture
+- Project Workflow
+- Methodology
+- Dataset Description
+- Project Structure
 
 ---
 
