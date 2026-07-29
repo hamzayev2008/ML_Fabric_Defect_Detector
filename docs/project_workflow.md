@@ -1,22 +1,26 @@
-Dataset Collection
-        │
-        ▼
-Data Preprocessing
-        │
-        ▼
-Dataset Splitting
-        │
-        ▼
-Model Training
-        │
-        ▼
+Collect Teddy Bear Images
+          │
+          ▼
+Label Images
+(Normal / Defective)
+          │
+          ▼
+Image Preprocessing
+          │
+          ▼
+Train / Validation / Test Split
+          │
+          ▼
+CNN Model Training
+          │
+          ▼
 Model Evaluation
-        │
-        ▼
+          │
+          ▼
 Hyperparameter Tuning
-        │
-        ▼
-Final Model
-        │
-        ▼
-Prediction
+          │
+          ▼
+Save Best Model
+          │
+          ▼
+Predict New Teddy Bear Images
