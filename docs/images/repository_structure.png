@@ -1,0 +1,12 @@
+ML_toy_detector
+│
+├── dataset
+├── docs
+├── src
+├── models
+├── notebooks
+├── results
+│
+├── README.md
+├── requirements.txt
+└── LICENSE
