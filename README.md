@@ -47,6 +47,24 @@ The dataset includes different teddy bear colors and defect types.
 
 ---
 
+## System Architecture
+
+```text
+            Input Image
+                 │
+                 ▼
+        Image Preprocessing
+                 │
+                 ▼
+       CNN / YOLO Classifier
+                 │
+                 ▼
+        Binary Classification
+                 │
+                 ▼
+      Normal / Defective
+      + Confidence Score
+
 ## Project Structure
 
 ```
@@ -64,6 +82,30 @@ ML_toy_detector/
 ├── .gitignore
 └── LICENSE
 ```
+
+```markdown
+## Project Workflow
+
+```text
+Dataset
+   │
+   ▼
+Preprocessing
+   │
+   ▼
+Data Augmentation
+   │
+   ▼
+Train / Validation Split
+   │
+   ▼
+Model Training
+   │
+   ▼
+Evaluation
+   │
+   ▼
+Prediction
 
 ---
 
@@ -104,6 +146,18 @@ The model will be evaluated using:
 
 ---
 
+```markdown
+## Model Performance
+
+| Metric | Value |
+|---------|------:|
+| Accuracy | - |
+| Precision | - |
+| Recall | - |
+| F1-score | - |
+
+*Results will be added after model training.*
+
 ## Installation
 
 Clone the repository
@@ -111,6 +165,17 @@ Clone the repository
 ```bash
 git clone https://github.com/your_username/ML_toy_detector.git
 ```
+
+## Repository Layout
+
+| Folder | Description |
+|---------|-------------|
+| dataset | Training images |
+| docs | Documentation |
+| src | Source code |
+| models | Saved models |
+| notebooks | Experiments |
+| results | Training results and evaluation |
 
 Install dependencies
 
