@@ -1,0 +1,19 @@
+Dataset
+   │
+   ▼
+Preprocessing
+   │
+   ▼
+Train / Validation Split
+   │
+   ▼
+Model Training
+   │
+   ▼
+Evaluation
+   │
+   ▼
+Save Best Model
+   │
+   ▼
+Prediction
