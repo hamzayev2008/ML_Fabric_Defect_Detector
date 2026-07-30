@@ -56,7 +56,7 @@ The dataset includes different teddy bear colors and defect types.
         Image Preprocessing
                  │
                  ▼
-       CNN / YOLO Classifier
+       CNN (YOLO Classifier is taken as an example)
                  │
                  ▼
         Binary Classification
