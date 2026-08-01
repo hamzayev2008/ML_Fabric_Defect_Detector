@@ -210,3 +210,4 @@ Additional documentation can be found in the `docs/` directory:
 **Fazliddin Hamzayev**
 
 AI/ML Capstone Project
+Repository initialized successfully.
