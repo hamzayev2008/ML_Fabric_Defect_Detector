@@ -36,4 +36,3 @@ class TeddyDataset(Dataset):
             image = self.augmentation(image=image)["image"]
         image = self.transform(image)
         return image, label
-    
