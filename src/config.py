@@ -1,6 +1,7 @@
 MODEL_NAME = "resnet18"
+MODEL_PATH = "teddy_classifier.pth"
 DATASET_PATH = "dataset"
 IMAGE_SIZE = 224
 BATCH_SIZE = 8
-MAX_EPOCHS = 50
+EPOCHS = 50
 LEARNING_RATE = 0.001
