@@ -7,6 +7,7 @@ from config import MODEL_PATH
 from model import TeddyClassifier
 from dataLoader import train_loader, validation_loader
 from validate import validate
+from config import EARLY_STOPPING
 
 model = TeddyClassifier()
 
@@ -15,6 +16,8 @@ criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
 best_accuracy = 0
+
+epochs_without_improvement = 0
 
 for epoch in range(EPOCHS):
     
@@ -44,8 +47,18 @@ for epoch in range(EPOCHS):
         criterion
     )
     
+    if val_accuracy > best_accuracy:
+        best_accuracy = val_accuracy
+        epochs_without_improvement = 0
+        torch.save(model.state_dict(), MODEL_PATH)
+    else:
+        epochs_without_improvement += 1
+        
     print(f"Validation Loss: {validate_loss:.4f}, Validation Accuracy: {val_accuracy * 100:.4f}%")
-
-if val_accuracy >= best_accuracy:
-    best_accuracy = val_accuracy
-    torch.save(model.state_dict(), MODEL_PATH)
+    
+    if epochs_without_improvement >= EARLY_STOPPING:
+        print(
+            f"Early stopping at epoch {epoch + 1}. "
+            f"Best validation accuracy: {best_accuracy * 100:.2f}%"
+        )
+        break
