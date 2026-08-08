@@ -1,7 +1,7 @@
 import torch
 
 from model import TeddyClassifier
-from config import MODEL_PATH, CLASSES,IMAGE_SIZE
+from config import MODEL_PATH, CLASSES
 from transforms import get_transform
 
 model = TeddyClassifier()
