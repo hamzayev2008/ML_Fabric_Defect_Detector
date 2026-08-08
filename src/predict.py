@@ -3,7 +3,6 @@ import torch
 from model import TeddyClassifier
 from config import MODEL_PATH, CLASSES,IMAGE_SIZE
 from transforms import get_transform
-from image_utils import load_image
 
 model = TeddyClassifier()
 
@@ -13,8 +12,7 @@ model.load_state_dict(torch.load(MODEL_PATH))
 
 model.eval()
 
-def predict(image_path):
-    image = load_image(image_path, image_size=IMAGE_SIZE, transform=transform)
+def predict(image):
     image = image.unsqueeze(0)
 
     with torch.no_grad():
