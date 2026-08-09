@@ -1,7 +1,9 @@
+DATASET_PATH = "dataset"
 MODEL_NAME = "resnet18"
 MODEL_PATH = "teddy_classifier.pth"
 TRAIN_DATASET_PATH = "train_dataset"
 VALIDATION_DATASET_PATH = "validation_dataset"
+TEST_DATASET_PATH = "test_dataset"
 CLASSES = ("normal", "defective")
 IMAGE_SIZE = 224
 BATCH_SIZE = 8
