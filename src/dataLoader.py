@@ -5,7 +5,7 @@ from dataset import TeddyDataset
 train_dataset = TeddyDataset(
     dataset_path = TRAIN_DATASET_PATH,
     image_size = IMAGE_SIZE,
-    augmentation = None
+    augmentation = True
 )
 
 train_loader = DataLoader(
@@ -18,7 +18,7 @@ train_loader = DataLoader(
 validation_dataset = TeddyDataset(
     dataset_path = VALIDATION_DATASET_PATH,
     image_size = IMAGE_SIZE,
-    augmentation = None
+    augmentation = False
 )
 
 validation_loader = DataLoader(

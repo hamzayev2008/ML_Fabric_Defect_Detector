@@ -27,5 +27,5 @@ class TeddyDataset(Dataset):
          
     def __getitem__(self, index):
         path, label = self.images[index]
-        image = load_image(path, self.image_size, self.transform, self.augmentation)
+        image = load_image(path, self.image_size, self.transform)
         return image, label
