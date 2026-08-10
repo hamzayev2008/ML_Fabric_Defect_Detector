@@ -9,6 +9,9 @@ def load_image_from_bytes(image_bytes, image_size, transform):
 
 def load_image(path, image_size, transform):
     image = cv2.imread(path)
+    if image is None:
+        print(f"Failed to load image: {path}")
+        raise ValueError(f"Could not read image: {path}")
     return process_image(image, image_size, transform)
 
 def process_image(image, image_size, transform):
