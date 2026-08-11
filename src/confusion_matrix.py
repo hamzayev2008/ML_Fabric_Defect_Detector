@@ -54,14 +54,17 @@ plt.title('Confusion Matrix')
 plt.show()
 
 plt.subplot(1, 2, 1)
-plt.title(wrong_images[0][1].item(CLASSES[labels.item()]))
-plt.title(wrong_images[0][2].item(CLASSES[predicted.item()]))
+plt.title(
+    f"Actual: {CLASSES[wrong_images[0][1].item()]}\n"
+    f"Predicted: {CLASSES[wrong_images[0][2].item()]}"
+)
 image = plt.imread(wrong_images[0][0])
 plt.imshow(image)
 plt.subplot(1, 2, 2)
-plt.title(wrong_images[1][1].item(CLASSES[labels.item()]))
-plt.title(wrong_images[1][2].item(CLASSES[predicted.item()]))
-plt.title(wrong_images[1])
+plt.title(
+    f"Actual: {CLASSES[wrong_images[1][1].item()]}\n"
+    f"Predicted: {CLASSES[wrong_images[1][2].item()]}"
+)
 image = plt.imread(wrong_images[1][0])
 plt.imshow(image)
 plt.show()
