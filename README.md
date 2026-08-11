@@ -41,7 +41,6 @@ The dataset includes different teddy bear colors and defect types.
 - PyTorch
 - OpenCV
 - NumPy
-- Pandas
 - Matplotlib
 - Scikit-learn
 
