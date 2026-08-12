@@ -522,19 +522,18 @@ streamlit run src/app.py
 ---
 
 # 🧰 Technologies
-```markdown
-Python
-PyTorch
-Torchvision
-ResNet18
-OpenCV
-NumPy
-Pandas
-Matplotlib
-Scikit-learn
-Pillow
-Streamlit
-```
+
+- Python
+- PyTorch
+- Torchvision
+- ResNet18
+- OpenCV
+- NumPy
+- Pandas
+- Matplotlib
+- Scikit-learn
+- Pillow
+- Streamlit
 
 ---
 
