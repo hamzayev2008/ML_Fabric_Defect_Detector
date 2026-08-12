@@ -145,4 +145,4 @@ The documentation is intended to make the project:
 - easier to modify;
 - easier to present as an ML project.
 
-The main project overview is available in the root **[`README.md`](README.md)**.
+The main project overview is available in the root [Back to Main README](https://github.com/hamzayev2008/ML_toy_detector/blob/main/README.md).
