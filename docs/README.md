@@ -55,7 +55,7 @@ It explains:
 
 ### 3. Methodology
 
-methodology.md
+**[`methodology.md`](methodology.md)**
 
 Describes the methodology used to develop and train the model.
 
@@ -73,7 +73,7 @@ Topics include:
 
 ### 4. Dataset Description
 
-dataset_description.md
+**[`dataset_description.md`](dataset_description.md)**
 
 Describes the dataset used by the project.
 
@@ -89,7 +89,7 @@ It explains:
 
 ### 5. Project Structure
 
-project_structure.md
+**[`project_structure.md`](project_structure.md)**
 
 Provides a detailed explanation of the project directory structure and the purpose of each important file.
 
@@ -145,4 +145,4 @@ The documentation is intended to make the project:
 - easier to modify;
 - easier to present as an ML project.
 
-The main project overview is available in the root README.md.
+The main project overview is available in the root **[`README.md`](README.md)**.
