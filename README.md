@@ -74,10 +74,10 @@ The complete pipeline can be summarized as:
                  ┌───────────────┐
                  │ transforms.py │
                  │               │
-                 │ Resize         │
-                 │ Augmentation   │
-                 │ ToTensor       │
-                 │ Normalize      │
+                 │ Resize        │
+                 │ Augmentation  │
+                 │ ToTensor      │
+                 │ Normalize     │
                  └───────┬───────┘
                          │
                          ▼
