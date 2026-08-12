@@ -297,14 +297,14 @@ Test samples |	26
 
 The classification report produced by the current model:
 
-              precision    recall  f1-score   support
-
-normal           0.92      0.92      0.92        13
-defective        0.92      0.92      0.92        13
-
-accuracy                              0.92        26
-macro avg        0.92      0.92      0.92        26
-weighted avg     0.92      0.92      0.92        26
+             | precision   | recall | f1-score  | support
+-------------|-------------|--------|-----------|---------
+normal       |    0.92     | 0.92   |   0.92    |    13
+defective    |    0.92     | 0.92   |   0.92    |    13
+                                                          
+accuracy     |             |        |   0.92    |    26
+macro avg    |    0.92     | 0.92   |   0.92    |    26
+weighted avg |    0.92     | 0.92   |   0.92    |    26
 
 Note: The current test set is small (26 images). Therefore, these results should be considered experimental rather than production-level performance.
 
