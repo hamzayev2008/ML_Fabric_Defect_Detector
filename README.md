@@ -522,7 +522,7 @@ streamlit run src/app.py
 ---
 
 # 🧰 Technologies
-```text
+```markdown
 Python
 PyTorch
 Torchvision
