@@ -509,20 +509,15 @@ pip install -r requirements.txt
 Train the model:
 python src/train.py
 
-The best validation model is automatically saved according to MODEL_PATH.
-
-Validate / Test the model
-
-Run the appropriate evaluation script:
+1. The best validation model is automatically saved according to MODEL_PATH.
+2. Validate / Test the model
+3. Run the appropriate evaluation script:
 python src/test.py
-
-Generate confusion matrix and error analysis:
+4. Generate confusion matrix and error analysis:
 python src/confusion_matrix.py
-
-Make a prediction:
+5. Make a prediction:
 python src/predict.py
-
-Run Streamlit from the project root:
+6. Run Streamlit from the project root:
 streamlit run src/app.py
 
 ---
