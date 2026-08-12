@@ -511,19 +511,18 @@ python src/train.py
 
 The best validation model is automatically saved according to MODEL_PATH.
 
-Validate / test the model
+Validate / Test the model
 
 Run the appropriate evaluation script:
-
 python src/test.py
-Generate confusion matrix and error analysis
+
+Generate confusion matrix and error analysis:
 python src/confusion_matrix.py
-Make a prediction
+
+Make a prediction:
 python src/predict.py
-Run Streamlit
 
-From the project root:
-
+Run Streamlit from the project root:
 streamlit run src/app.py
 
 ---
