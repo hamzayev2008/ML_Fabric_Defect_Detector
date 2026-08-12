@@ -130,7 +130,8 @@ The dataset uses the classes defined in config.py.
 
 Example:
 
-normal     → 0\n
+normal     → 0
+
 defective  → 1
 
 # dataLoader.py
