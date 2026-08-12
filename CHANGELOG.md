@@ -1,14 +1,20 @@
-All notable changes to this project will be documented in this file.
+# Changelog
 
-## v0.1.0 - Initial Setup
+## v1.0.0
 
 ### Added
 
-- Initial GitHub repository
-- Project Brief
-- Dataset
-- Repository structure
-- README
-- License
-- Git ignore
-- Requirements
+- ResNet18-based teddy bear classifier
+- Training pipeline
+- Validation pipeline
+- Test evaluation
+- Early stopping
+- Best model checkpointing
+- Training/validation loss graphs
+- Validation accuracy graph
+- Classification report
+- Confusion matrix
+- Error analysis
+- Single-image prediction
+- Streamlit interface
+- Project documentation
