@@ -621,6 +621,8 @@ Methodology
 Dataset Description
 Project Structure
 
+For a detailed explanation of the project architecture, methodology, dataset, workflow, and source code, see the [**full project documentation**](docs/README.md).
+
 # 👤 Author
 
 Fazliddin Hamzayev
