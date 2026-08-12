@@ -40,7 +40,7 @@ Streamlit
 
 ### 2. Architecture
 
-architecture.md
+**[`architecture.md`](architecture.md)**
 
 Describes the architecture of the machine learning system.
 
@@ -119,6 +119,7 @@ ML_toy_detector/
 
 If you are new to the project, it is recommended to read the documentation in the following order:
 
+```text
 1. Dataset Description
         ↓
 2. Project Structure
@@ -128,6 +129,7 @@ If you are new to the project, it is recommended to read the documentation in th
 4. Architecture
         ↓
 5. Methodology
+```
 
 This order makes it easier to understand how the dataset is prepared, how the project is organized, and how the model ultimately produces predictions.
 
