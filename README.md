@@ -340,13 +340,13 @@ For each incorrect prediction, the project stores:
 The incorrectly classified images can then be visualized to understand where the model makes mistakes.
 
 Example:
-
+```text
 ┌──────────────────┬──────────────────┐
 │ Actual: normal   │ Actual: defective│
 │ Predicted:       │ Predicted:       │
 │ defective        │ normal           │
 └──────────────────┴──────────────────┘
-
+```
 Error analysis is useful for finding problems in the dataset and understanding limitations of the model.
 
 ---
