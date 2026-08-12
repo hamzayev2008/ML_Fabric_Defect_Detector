@@ -356,4 +356,4 @@ streamlit run src/app.py
 
 For a complete description of the project, see the [**← Back to Main README**](https://github.com/hamzayev2008/ML_toy_detector/blob/main/README.md).
 
-For detailed technical documentation, see the documentation directory.
+For detailed technical documentation, see the [**full project documentation**](docs/README.md).
