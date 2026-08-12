@@ -506,23 +506,23 @@ pip install -r requirements.txt
 ---
 
 # 🚀 Running the Project
-Train the model:
+1. Train the model:
 python src/train.py
-
-1. The best validation model is automatically saved according to MODEL_PATH.
-2. Validate / Test the model
-3. Run the appropriate evaluation script:
+2. The best validation model is automatically saved according to MODEL_PATH.
+3. Validate / Test the model
+4. Run the appropriate evaluation script:
 python src/test.py
-4. Generate confusion matrix and error analysis:
+5. Generate confusion matrix and error analysis:
 python src/confusion_matrix.py
-5. Make a prediction:
+6. Make a prediction:
 python src/predict.py
-6. Run Streamlit from the project root:
+7. Run Streamlit from the project root:
 streamlit run src/app.py
 
 ---
 
 # 🧰 Technologies
+```batch
 Python
 PyTorch
 Torchvision
@@ -534,6 +534,7 @@ Matplotlib
 Scikit-learn
 Pillow
 Streamlit
+```
 
 ---
 
