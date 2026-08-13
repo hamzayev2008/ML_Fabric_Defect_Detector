@@ -24,10 +24,10 @@ def predict(image, model_name):
 
     with torch.no_grad():
         prediction = model(image)
-        probabilities = torch.softmax(prediction, dim=1)
+        probabilities = torch.softmax(prediction, dim=1)[0]
         predicted = prediction.argmax(dim=1)   
         name = CLASSES[predicted.item()]
-        confidence = probabilities[0, predicted.item()].item()
+        confidence = probabilities[predicted.item()].item()
         class_probabilities = {
             CLASSES[i]: probabilities[i].item()
             for i in range(len(CLASSES))

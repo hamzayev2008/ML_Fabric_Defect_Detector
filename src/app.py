@@ -74,54 +74,23 @@ with center:
 
 if uploaded_file is not None:
 
-    st.markdown(
-        """
-        <div class="pipeline">
+    st.subheader("🔄 ML Pipeline")
 
-            <div class="pipeline-step">
-                📷 Input Image
-            </div>
+    pipeline = [
+        "📷 Input Image",
+        "🔄 Resize",
+        "🔢 ToTensor",
+        "📊 Normalize",
+        "🧠 ResNet",
+        "⚡ Softmax",
+        "🎯 Prediction",
+    ]
 
-            →
-            
-            <div class="pipeline-step">
-                🔄 Resize
-            </div>
+    cols = st.columns(len(pipeline))
 
-            →
-
-            <div class="pipeline-step">
-                🔢 ToTensor
-            </div>
-
-            →
-
-            <div class="pipeline-step">
-                📊 Normalize
-            </div>
-
-            →
-
-            <div class="pipeline-step">
-                🧠 ResNet
-            </div>
-
-            →
-
-            <div class="pipeline-step">
-                ⚡ Softmax
-            </div>
-
-            →
-
-            <div class="pipeline-step">
-                🎯 Prediction
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    for col, step in zip(cols, pipeline):
+        with col:
+            st.info(step)
 
 transform = get_transform(augmentation=False)
 
