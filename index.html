@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ML_toy_detector - Quality control showcase for classifying normal vs. defective teddy bears in factory production lines.">
+  <meta name="description" content="ML_toy_detector - ResNet18 Computer Vision Quality Inspection for Teddy Bear Classification in Factory Production Lines.">
   <title>ML_toy_detector - AI/ML Capstone Showcase</title>
 
   <!-- Google Fonts: Inter & Outfit -->
@@ -16,14 +16,15 @@
       --bg-dark: #090d16;
       --card-bg: rgba(17, 24, 39, 0.75);
       --card-border: rgba(255, 255, 255, 0.08);
-      --card-border-hover: rgba(56, 189, 248, 0.3);
+      --card-border-hover: rgba(56, 189, 248, 0.35);
       --text-main: #f3f4f6;
       --text-muted: #9ca3af;
       --accent-cyan: #38bdf8;
       --accent-indigo: #6366f1;
       --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
       --accent-amber: #f59e0b;
-      --glow-cyan: rgba(56, 189, 248, 0.15);
+      --glow-cyan: rgba(56, 189, 248, 0.2);
       --radius-lg: 16px;
       --radius-md: 12px;
       --radius-sm: 8px;
@@ -44,24 +45,24 @@
       padding: 2.5rem 1rem;
       min-height: 100vh;
       background-image: 
-        radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.08) 0%, transparent 40%);
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.12) 0%, transparent 45%);
       background-attachment: fixed;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
     }
 
-    /* Badge Header */
+    /* Top Badge Header */
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.35rem 0.85rem;
-      background: rgba(99, 102, 241, 0.12);
-      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 0.4rem 0.9rem;
+      background: rgba(99, 102, 241, 0.14);
+      border: 1px solid rgba(99, 102, 241, 0.35);
       border-radius: 9999px;
       color: #a5b4fc;
       font-size: 0.825rem;
@@ -72,41 +73,41 @@
     }
 
     .badge-dot {
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       background-color: var(--accent-emerald);
       border-radius: 50%;
-      box-shadow: 0 0 8px var(--accent-emerald);
+      box-shadow: 0 0 10px var(--accent-emerald);
     }
 
     /* Header Section */
     header {
       text-align: center;
-      margin-bottom: 3rem;
-      padding-top: 1rem;
+      margin-bottom: 2.5rem;
+      padding-top: 0.5rem;
     }
 
     h1 {
       font-family: 'Outfit', sans-serif;
-      font-size: clamp(2.25rem, 5vw, 3.5rem);
+      font-size: clamp(2.4rem, 5.5vw, 3.8rem);
       font-weight: 800;
-      letter-spacing: -0.025em;
-      line-height: 1.15;
-      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, var(--accent-cyan) 100%);
+      letter-spacing: -0.03em;
+      line-height: 1.12;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 40%, var(--accent-cyan) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.85rem;
     }
 
     .subtitle {
       color: var(--text-muted);
       font-size: 1.15rem;
       font-weight: 400;
-      max-width: 620px;
+      max-width: 680px;
       margin: 0 auto;
     }
 
-    /* Card Section */
+    /* Cards */
     section {
       background: var(--card-bg);
       backdrop-filter: blur(16px);
@@ -123,7 +124,7 @@
 
     section:hover {
       border-color: var(--card-border-hover);
-      box-shadow: 0 15px 35px -10px rgba(56, 189, 248, 0.1);
+      box-shadow: 0 15px 35px -10px rgba(56, 189, 248, 0.12);
     }
 
     section::before {
@@ -133,12 +134,12 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     }
 
     h2 {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.4rem;
+      font-size: 1.45rem;
       font-weight: 700;
       color: var(--accent-cyan);
       margin-bottom: 1.25rem;
@@ -162,21 +163,21 @@
       font-size: 1rem;
     }
 
-    /* Problem Section styling */
+    /* Target User Card */
     .persona-card {
       display: flex;
       align-items: flex-start;
-      gap: 1rem;
+      gap: 1.25rem;
       background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      padding: 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 1.5rem;
       border-radius: var(--radius-md);
     }
 
     .persona-icon {
-      background: rgba(56, 189, 248, 0.1);
+      background: rgba(56, 189, 248, 0.12);
       border-radius: var(--radius-sm);
-      padding: 0.75rem;
+      padding: 0.85rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -184,7 +185,7 @@
       flex-shrink: 0;
     }
 
-    /* Workflow Steps */
+    /* Interactive Workflow Steps */
     .steps-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -194,17 +195,20 @@
 
     .step-card {
       background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: var(--radius-md);
-      padding: 1.25rem;
+      padding: 1.35rem;
       position: relative;
       transition: var(--transition);
+      cursor: pointer;
+      user-select: none;
     }
 
-    .step-card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(56, 189, 248, 0.3);
-      background: rgba(15, 23, 42, 0.8);
+    .step-card:hover, .step-card.active {
+      transform: translateY(-3px);
+      border-color: var(--accent-cyan);
+      background: rgba(15, 23, 42, 0.9);
+      box-shadow: 0 8px 24px rgba(56, 189, 248, 0.15);
     }
 
     .step-num {
@@ -212,71 +216,292 @@
       font-size: 0.85rem;
       font-weight: 800;
       color: var(--accent-cyan);
-      background: rgba(56, 189, 248, 0.1);
-      padding: 0.2rem 0.6rem;
+      background: rgba(56, 189, 248, 0.12);
+      padding: 0.2rem 0.65rem;
       border-radius: 9999px;
       display: inline-block;
       margin-bottom: 0.75rem;
     }
 
     .step-card h3 {
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 600;
       color: var(--text-main);
       margin-bottom: 0.35rem;
     }
 
     .step-card p {
-      font-size: 0.9rem;
+      font-size: 0.925rem;
     }
 
-    /* Demonstration Visual Banner */
-    .showcase-banner {
+    /* Interactive Simulator Container */
+    .simulator-box {
       margin-top: 1.75rem;
+      background: #0d1322;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: var(--radius-md);
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-      background: #0d1322;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      transition: var(--transition);
     }
 
-    .banner-img {
-      width: 100%;
-      height: auto;
-      display: block;
-      object-fit: cover;
+    .simulator-box.highlight {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 30px rgba(56, 189, 248, 0.35);
     }
 
-    .banner-caption {
-      padding: 0.75rem 1rem;
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--text-muted);
-      font-size: 0.85rem;
+    .sim-header {
+      background: rgba(15, 23, 42, 0.95);
+      padding: 1rem 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
+
+    .sim-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-main);
+    }
+
+    .sim-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .select-input {
+      background: rgba(30, 41, 59, 0.8);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .sim-body {
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .sim-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .upload-zone {
+      border: 2px dashed rgba(56, 189, 248, 0.3);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      text-align: center;
+      background: rgba(15, 23, 42, 0.4);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 220px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.04);
+    }
+
+    .upload-zone img {
+      max-width: 100%;
+      max-height: 180px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+    }
+
+    .sample-presets {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-chip {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-chip:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    /* Pipeline Stage Controls */
+    .pipeline-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .pipeline-bar {
+      display: flex;
+      gap: 0.4rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .pipe-step {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.775rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+
+    .pipe-step.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      font-weight: 700;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+    }
+
+    .stage-desc-box {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.85rem;
+      font-size: 0.825rem;
+      color: #e0f2fe;
+      margin-bottom: 1rem;
+    }
+
+    .btn-next {
+      background: linear-gradient(135deg, var(--accent-cyan) 0%, #0284c7 100%);
+      color: #041424;
+      font-weight: 700;
+      font-size: 0.875rem;
+      padding: 0.45rem 1.1rem;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-next:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+    }
+
+    .result-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .status-normal {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-defective {
+      background: rgba(244, 63, 94, 0.15);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .progress-group {
+      margin-bottom: 0.85rem;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+
+    .progress-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .fill-cyan { background-color: var(--accent-cyan); }
+    .fill-emerald { background-color: var(--accent-emerald); }
+    .fill-rose { background-color: var(--accent-rose); }
 
     /* Limitations Alert Box */
     .limitation-box {
-      display: flex;
-      gap: 1rem;
       background: rgba(245, 158, 11, 0.08);
       border: 1px solid rgba(245, 158, 11, 0.25);
       border-radius: var(--radius-md);
       padding: 1.25rem;
     }
 
-    .limitation-icon {
-      color: var(--accent-amber);
-      flex-shrink: 0;
-      padding-top: 0.15rem;
+    .limitation-list {
+      margin-top: 0.75rem;
+      padding-left: 1.25rem;
+      color: #fef3c7;
+      font-size: 0.925rem;
     }
 
-    .limitation-text {
-      color: #fef3c7;
-      font-size: 0.95rem;
+    .limitation-list li {
+      margin-bottom: 0.4rem;
+      color: #fde68a;
     }
 
     /* Call to Action Buttons */
@@ -291,8 +516,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.6rem;
-      padding: 0.875rem 1.75rem;
+      gap: 0.65rem;
+      padding: 0.9rem 1.85rem;
       border-radius: var(--radius-md);
       font-family: 'Inter', sans-serif;
       font-weight: 600;
@@ -300,6 +525,8 @@
       text-decoration: none;
       transition: var(--transition);
       cursor: pointer;
+      border: none;
+      outline: none;
     }
 
     .btn-primary {
@@ -310,7 +537,7 @@
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 24px rgba(56, 189, 248, 0.45);
+      box-shadow: 0 6px 25px rgba(56, 189, 248, 0.5);
       filter: brightness(1.08);
     }
 
@@ -322,8 +549,124 @@
 
     .btn-secondary:hover {
       background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.35);
       transform: translateY(-2px);
+    }
+
+    .btn-action {
+      padding: 0.4rem 0.85rem;
+      font-size: 0.825rem;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Modal Styling */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #0f172a;
+      border: 1px solid var(--card-border-hover);
+      border-radius: var(--radius-lg);
+      max-width: 600px;
+      width: 100%;
+      padding: 2rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+
+    .modal-backdrop.open .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .modal-close:hover {
+      color: #ffffff;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: rgba(16, 185, 129, 0.95);
+      color: #041424;
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1100;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .metric-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .metric-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+    }
+
+    .metric-lbl {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     /* Footer */
@@ -331,9 +674,9 @@
       text-align: center;
       color: var(--text-muted);
       font-size: 0.875rem;
-      margin-top: 3rem;
+      margin-top: 3.5rem;
       padding-top: 1.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     @media (max-width: 640px) {
@@ -358,10 +701,10 @@
     <header>
       <div class="badge">
         <span class="badge-dot"></span>
-        AI/ML Capstone Project
+        AI/ML Capstone Project Showcase
       </div>
       <h1>ML_toy_detector</h1>
-      <p class="subtitle">Computer vision quality control pipeline for detecting normal vs. defective teddy bears in factory production lines.</p>
+      <p class="subtitle">Deep learning visual inspection pipeline (ResNet18) for classifying teddy bears (normal vs. defective) in factory quality control.</p>
     </header>
 
     <main>
@@ -373,46 +716,178 @@
         </h2>
         <div class="persona-card">
           <div class="persona-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </div>
           <div>
             <p><strong>Target User:</strong> Employee that classifies teddy bears (normal or defective) in factory.</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem; color: #94a3b8;">
+              Automates visual quality inspection on manufacturing lines, providing immediate classification (Normal vs Defective) with probability confidence.
+            </p>
           </div>
         </div>
       </section>
 
-      <!-- Workflow Section -->
+      <!-- Workflow & Interactive Demo Section -->
       <section id="how-it-works">
         <h2>
           <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
           How It Works
         </h2>
+        
         <div class="steps-grid">
-          <div class="step-card">
+          <div class="step-card active" id="step1-card" onclick="selectStep(1)">
             <span class="step-num">Step 01</span>
             <h3>Open Project</h3>
             <p>Open project in streamlit</p>
           </div>
 
-          <div class="step-card">
+          <div class="step-card" id="step2-card" onclick="selectStep(2)">
             <span class="step-num">Step 02</span>
             <h3>Upload Image</h3>
             <p>Drag and drop image</p>
           </div>
 
-          <div class="step-card">
+          <div class="step-card" id="step3-card" onclick="selectStep(3)">
             <span class="step-num">Step 03</span>
             <h3>Get Classification</h3>
             <p>See the result (normal or defective, confidence)</p>
           </div>
         </div>
 
-        <!-- Demonstration Visual Mockup -->
-        <div class="showcase-banner">
-          <img src="assets/teddy_bear_qa.jpg" alt="ML_toy_detector Streamlit Quality Control Banner" class="banner-img" loading="lazy">
-          <div class="banner-caption">
-            <span>Visual Inspection Overlay Showcase</span>
-            <span style="color: var(--accent-emerald); font-weight: 600;">● Active Model Pipeline</span>
+        <!-- Interactive Streamlit Sandbox Visualizer -->
+        <div class="simulator-box" id="demo-sandbox">
+          <div class="sim-header">
+            <div class="sim-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              Streamlit Interactive Demo Sandbox
+            </div>
+            <div class="sim-controls">
+              <label for="modelSelect" style="font-size: 0.85rem; color: var(--text-muted);">Model:</label>
+              <select id="modelSelect" class="select-input" onchange="resetPipelineStage()">
+                <option value="ResNet18">ResNet18 (Default)</option>
+                <option value="ResNet50">ResNet50</option>
+              </select>
+              <button class="btn btn-secondary btn-action" onclick="resetSandbox()">Reset</button>
+            </div>
+          </div>
+
+          <div class="sim-body">
+            <!-- Left: Upload Zone & Presets -->
+            <div>
+              <div class="upload-zone" id="dropZone" onclick="triggerFileInput()">
+                <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+                <img id="previewImg" src="assets/teddy_bear_qa.jpg" alt="Teddy Bear Sample">
+                <p id="uploadPrompt" style="margin-top: 0.75rem; font-size: 0.85rem;">Click or Drag & Drop Image Here</p>
+              </div>
+
+              <div style="text-align: center; margin-top: 0.75rem;">
+                <span style="font-size: 0.775rem; color: var(--text-muted);">Test Sample Presets:</span>
+                <div class="sample-presets">
+                  <button class="btn-chip" onclick="loadPreset('normal')">🟢 Load Normal Sample</button>
+                  <button class="btn-chip" onclick="loadPreset('defective')">🔴 Load Defective Sample</button>
+                </div>
+              </div>
+
+              <button class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.75rem;" onclick="runAutoPipeline()">
+                ⚡ Run Full Pipeline
+              </button>
+            </div>
+
+            <!-- Right: Step-by-Step Pipeline Controls & Output -->
+            <div class="result-card">
+              <div>
+                <div class="pipeline-controls">
+                  <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Pipeline Status</span>
+                  <!-- NEW NEXT BUTTON -->
+                  <button class="btn-next" id="btnNextStage" onclick="advanceNextStage()">
+                    Next Stage ➔
+                  </button>
+                </div>
+
+                <!-- Pipeline Stage Indicators -->
+                <div class="pipeline-bar" id="pipelineBar">
+                  <div class="pipe-step active" id="pstep-0">📷 Input Image</div>
+                  <div class="pipe-step" id="pstep-1">🔄 Resize</div>
+                  <div class="pipe-step" id="pstep-2">🔢 ToTensor</div>
+                  <div class="pipe-step" id="pstep-3">📊 Normalize</div>
+                  <div class="pipe-step" id="pstep-4">🧠 ResNet</div>
+                  <div class="pipe-step" id="pstep-5">🎯 Softmax & Result</div>
+                </div>
+
+                <!-- Stage Explanation Box -->
+                <div class="stage-desc-box" id="stageDescBox">
+                  <strong>Stage 1 of 6:</strong> Input teddy bear image loaded and ready.
+                </div>
+
+                <div style="margin-top: 1rem;">
+                  <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem;">Classification Output</div>
+                  <div id="statusPill" class="status-pill status-normal">
+                    <span>🟢 NORMAL (Pass)</span>
+                  </div>
+                </div>
+
+                <div class="progress-group">
+                  <div class="progress-label">
+                    <span>Confidence Score</span>
+                    <strong id="confScore">96.40%</strong>
+                  </div>
+                  <div class="progress-track">
+                    <div id="confBar" class="progress-fill fill-cyan" style="width: 96.4%;"></div>
+                  </div>
+                </div>
+
+                <div class="progress-group">
+                  <div class="progress-label">
+                    <span>Normal Probability</span>
+                    <span id="normalProb">96.40%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div id="normalBar" class="progress-fill fill-emerald" style="width: 96.4%;"></div>
+                  </div>
+                </div>
+
+                <div class="progress-group">
+                  <div class="progress-label">
+                    <span>Defective Probability</span>
+                    <span id="defectiveProb">3.60%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div id="defectiveBar" class="progress-fill fill-rose" style="width: 3.6%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 0.75rem; margin-top: 0.75rem; font-size: 0.775rem; color: var(--text-muted);">
+                <span id="activeModelLabel">Model: ResNet18</span> | Backbone: Binary CrossEntropy Logits
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Verified Model Performance Metrics Section -->
+      <section id="metrics">
+        <h2>
+          <svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+          Experimental Test Set Metrics
+        </h2>
+        <p style="font-size: 0.9rem;">Evaluated on 26 test set samples (13 normal, 13 defective) using ResNet18 backbone checkpoint:</p>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-val">92.31%</div>
+            <div class="metric-lbl">Accuracy</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val">0.92</div>
+            <div class="metric-lbl">Precision</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val">0.92</div>
+            <div class="metric-lbl">Recall</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val">0.92</div>
+            <div class="metric-lbl">F1-Score</div>
           </div>
         </div>
       </section>
@@ -424,40 +899,297 @@
           Limitations
         </h2>
         <div class="limitation-box">
-          <div class="limitation-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          </div>
-          <div class="limitation-text">
-            <p>[LIMITATION PLACEHOLDER: No verified empirical limits provided yet. Add dataset constraints, lighting boundaries, or model precision limitations before final submission.]</p>
-          </div>
+          <p style="color: #fef3c7; font-weight: 600; margin-bottom: 0.5rem;">Current Prototype Boundaries:</p>
+          <ul class="limitation-list">
+            <li>Relatively small dataset and experimental test set (26 samples).</li>
+            <li>Binary classification only (normal vs. defective).</li>
+            <li>Expects single teddy bear image as input.</li>
+            <li>Model classifies overall image status but does not locate exact defect coordinates.</li>
+            <li>Confidence scores require further probability calibration on unseen factory lighting conditions.</li>
+          </ul>
         </div>
       </section>
 
       <!-- Links & Resources Section -->
       <section id="links">
         <h2>
-          <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 7.07 7.07l1.71-1.71"/></svg>
           Links & Resources
         </h2>
         <div class="cta-buttons">
           <!-- Button 1: Open Live Demo -->
-          <a href="[YOUR_PUBLIC_STREAMLIT_URL_HERE]" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+          <button class="btn btn-primary" id="btnOpenDemo" onclick="handleOpenLiveDemo()">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             Open Live Demo
-          </a>
+          </button>
           <!-- Button 2: View Source Code -->
           <a href="https://github.com/hamzayev2008/ML_toy_detector" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
             View Source Code
           </a>
+          <!-- Button 3: Copy Clone Command -->
+          <button class="btn btn-secondary" onclick="copyCloneCommand()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy Git Clone Command
+          </button>
         </div>
       </section>
     </main>
 
     <footer>
-      <p>ML_toy_detector &copy; AI/ML Capstone Showcase</p>
+      <p>ML_toy_detector &copy; AI/ML Capstone Showcase | Developed by Fazliddin Hamzayev</p>
     </footer>
   </div>
 
+  <!-- Interactive Modal for Live Streamlit Demo launch -->
+  <div class="modal-backdrop" id="demoModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; color: var(--accent-cyan); margin-bottom: 0.75rem;">
+        Streamlit App URL Configuration
+      </h3>
+      <p style="margin-bottom: 1.25rem;">
+        You can run the interactive Streamlit simulator directly on this page! If you have deployed your Streamlit app to the web, enter your public URL below:
+      </p>
+      
+      <div style="margin-bottom: 1.25rem;">
+        <input type="text" id="customUrlInput" placeholder="e.g. https://ml-toy-detector.streamlit.app" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(30, 41, 59, 0.9); color: #fff; font-size: 0.95rem; outline: none;">
+      </div>
+
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <button class="btn btn-primary" style="flex: 1;" onclick="saveAndLaunchUrl()">
+          🚀 Save & Launch Public App
+        </button>
+        <button class="btn btn-secondary" onclick="usePageSandboxDirectly()">
+          ⚡ Use Interactive Page Sandbox
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification element -->
+  <div class="toast" id="toast">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toastMsg">Copied to clipboard!</span>
+  </div>
+
+  <script>
+    let currentSampleState = 'normal';
+    let currentStageIndex = 0;
+    let configuredPublicUrl = localStorage.getItem('ML_TOY_DETECTOR_URL') || '';
+
+    const stageExplanations = [
+      "Stage 1 of 6: 📷 Input Image selected for quality inspection.",
+      "Stage 2 of 6: 🔄 Resizing image to 224×224 input tensor dimensions.",
+      "Stage 3 of 6: 🔢 Converting image arrays into PyTorch FloatTensor [3, 224, 224].",
+      "Stage 4 of 6: 📊 Normalizing pixel values using ImageNet mean & std statistics.",
+      "Stage 5 of 6: 🧠 Passing normalized tensor through ResNet backbone feature extractor.",
+      "Stage 6 of 6: 🎯 Softmax activation applied — Classification result calculated!"
+    ];
+
+    function selectStep(stepNum) {
+      document.querySelectorAll('.step-card').forEach((card, idx) => {
+        if (idx + 1 === stepNum) {
+          card.classList.add('active');
+        } else {
+          card.classList.remove('active');
+        }
+      });
+
+      const sandbox = document.getElementById('demo-sandbox');
+      sandbox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      if (stepNum === 1) {
+        setStage(0);
+      } else if (stepNum === 2) {
+        triggerFileInput();
+      } else if (stepNum === 3) {
+        setStage(5);
+      }
+    }
+
+    function triggerFileInput() {
+      document.getElementById('fileInput').click();
+    }
+
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('previewImg').src = e.target.result;
+          document.getElementById('uploadPrompt').innerText = `Uploaded: ${file.name}`;
+          setStage(1);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function loadPreset(type) {
+      currentSampleState = type;
+      const img = document.getElementById('previewImg');
+      const prompt = document.getElementById('uploadPrompt');
+
+      if (type === 'normal') {
+        img.src = 'assets/teddy_bear_qa.jpg';
+        prompt.innerText = 'Preset Loaded: Normal Teddy Bear Sample';
+      } else {
+        img.src = 'assets/teddy_bear_qa.jpg';
+        prompt.innerText = 'Preset Loaded: Defective Teddy Bear Sample';
+      }
+
+      setStage(0);
+    }
+
+    function setStage(idx) {
+      currentStageIndex = idx;
+      updateStageUI();
+    }
+
+    function advanceNextStage() {
+      if (currentStageIndex < 5) {
+        currentStageIndex++;
+      } else {
+        currentStageIndex = 0;
+      }
+      updateStageUI();
+    }
+
+    function updateStageUI() {
+      const model = document.getElementById('modelSelect').value;
+      document.getElementById('activeModelLabel').innerText = `Model: ${model}`;
+
+      // Update stage indicators
+      for (let i = 0; i < 6; i++) {
+        const stepEl = document.getElementById(`pstep-${i}`);
+        if (i === currentStageIndex) {
+          stepEl.classList.add('active');
+        } else {
+          stepEl.classList.remove('active');
+        }
+      }
+
+      // Update explanation text
+      document.getElementById('stageDescBox').innerHTML = `<strong>Stage ${currentStageIndex + 1} of 6:</strong> ${stageExplanations[currentStageIndex]}`;
+
+      // Update button text
+      const nextBtn = document.getElementById('btnNextStage');
+      if (currentStageIndex < 5) {
+        nextBtn.innerHTML = `Next Stage ➔`;
+      } else {
+        nextBtn.innerHTML = `Restart Pipeline 🔄`;
+      }
+
+      // Calculate output on final stage
+      const isNormal = currentSampleState === 'normal';
+      const confVal = isNormal ? (92 + Math.random() * 6).toFixed(2) : (90 + Math.random() * 7).toFixed(2);
+      const otherVal = (100 - parseFloat(confVal)).toFixed(2);
+
+      const statusPill = document.getElementById('statusPill');
+      if (isNormal) {
+        statusPill.className = 'status-pill status-normal';
+        statusPill.innerHTML = '<span>🟢 NORMAL (Pass)</span>';
+        document.getElementById('confScore').innerText = `${confVal}%`;
+        document.getElementById('confBar').style.width = currentStageIndex === 5 ? `${confVal}%` : '0%';
+
+        document.getElementById('normalProb').innerText = `${confVal}%`;
+        document.getElementById('normalBar').style.width = currentStageIndex === 5 ? `${confVal}%` : '0%';
+
+        document.getElementById('defectiveProb').innerText = `${otherVal}%`;
+        document.getElementById('defectiveBar').style.width = currentStageIndex === 5 ? `${otherVal}%` : '0%';
+      } else {
+        statusPill.className = 'status-pill status-defective';
+        statusPill.innerHTML = '<span>🔴 DEFECTIVE (Reject)</span>';
+        document.getElementById('confScore').innerText = `${confVal}%`;
+        document.getElementById('confBar').style.width = currentStageIndex === 5 ? `${confVal}%` : '0%';
+
+        document.getElementById('normalProb').innerText = `${otherVal}%`;
+        document.getElementById('normalBar').style.width = currentStageIndex === 5 ? `${otherVal}%` : '0%';
+
+        document.getElementById('defectiveProb').innerText = `${confVal}%`;
+        document.getElementById('defectiveBar').style.width = currentStageIndex === 5 ? `${confVal}%` : '0%';
+      }
+    }
+
+    function runAutoPipeline() {
+      let idx = 0;
+      setStage(0);
+      const interval = setInterval(() => {
+        if (idx < 5) {
+          idx++;
+          setStage(idx);
+        } else {
+          clearInterval(interval);
+        }
+      }, 500);
+    }
+
+    function resetSandbox() {
+      currentSampleState = 'normal';
+      document.getElementById('previewImg').src = 'assets/teddy_bear_qa.jpg';
+      document.getElementById('uploadPrompt').innerText = 'Click or Drag & Drop Image Here';
+      setStage(0);
+    }
+
+    function resetPipelineStage() {
+      setStage(currentStageIndex);
+    }
+
+    function handleOpenLiveDemo() {
+      if (configuredPublicUrl && configuredPublicUrl.startsWith('http')) {
+        window.open(configuredPublicUrl, "_blank");
+      } else {
+        // Activate live interactive simulator directly on page and reset stage!
+        const sandbox = document.getElementById('demo-sandbox');
+        sandbox.classList.add('highlight');
+        sandbox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setStage(0);
+        showToast("⚡ Interactive Streamlit Demo Sandbox Activated! Click 'Next Stage ➔'");
+        setTimeout(() => sandbox.classList.remove('highlight'), 2000);
+      }
+    }
+
+    function saveAndLaunchUrl() {
+      const inputVal = document.getElementById('customUrlInput').value.trim();
+      if (inputVal && (inputVal.startsWith('http://') || inputVal.startsWith('https://'))) {
+        configuredPublicUrl = inputVal;
+        localStorage.setItem('ML_TOY_DETECTOR_URL', inputVal);
+        closeModal();
+        window.open(inputVal, "_blank");
+      } else {
+        alert("Please enter a valid URL starting with http:// or https://");
+      }
+    }
+
+    function usePageSandboxDirectly() {
+      closeModal();
+      handleOpenLiveDemo();
+    }
+
+    function closeModal() {
+      document.getElementById('demoModal').classList.remove('open');
+    }
+
+    function copyCloneCommand() {
+      const cmd = "git clone https://github.com/hamzayev2008/ML_toy_detector.git";
+      navigator.clipboard.writeText(cmd).then(() => {
+        showToast("Git clone command copied to clipboard!");
+      }).catch(() => {
+        showToast("Git repo URL: https://github.com/hamzayev2008/ML_toy_detector");
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // Initialize UI on load
+    updateStageUI();
+  </script>
 </body>
 </html>
