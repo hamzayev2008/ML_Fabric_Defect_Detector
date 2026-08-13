@@ -1,16 +1,43 @@
+import sys
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
 
-from config import EPOCHS
-from config import LEARNING_RATE
-from config import MODEL_PATH
+from config import (
+    EPOCHS,
+    LEARNING_RATE,
+    EARLY_STOPPING,
+    MODEL_RESNET18_NAME,
+    MODEL_RESNET50_NAME,
+    MODEL_RESNET18_PATH,
+    MODEL_RESNET50_PATH,
+)
 from model import TeddyClassifier
 from dataLoader import train_loader, validation_loader
 from validate import validate
-from config import EARLY_STOPPING
 
-model = TeddyClassifier()
+if len(sys.argv) > 1:
+    model_name = sys.argv[1].lower()
+else:
+    model_name = MODEL_RESNET18_NAME
+
+if model_name == MODEL_RESNET18_NAME:
+
+    model_path = MODEL_RESNET18_PATH
+
+elif model_name == MODEL_RESNET50_NAME:
+
+    model_path = MODEL_RESNET50_PATH
+
+else:
+
+    raise ValueError("Unknown model. Choose 'resnet18' or 'resnet50'.")
+
+
+print(f"Training model: {model_name}")
+print(f"Model will be saved to: {model_path}")
+
+model = TeddyClassifier(model_name)
 
 criterion = nn.CrossEntropyLoss()
 
@@ -57,7 +84,13 @@ for epoch in range(EPOCHS):
     if val_accuracy > best_accuracy:
         best_accuracy = val_accuracy
         epochs_without_improvement = 0
-        torch.save(model.state_dict(), MODEL_PATH)
+        torch.save(model.state_dict(), model_path)
+        
+        print(
+            f"Best model saved! "
+            f"Accuracy: {best_accuracy * 100:.2f}%"
+        )
+        
     else:
         epochs_without_improvement += 1
         
@@ -74,6 +107,15 @@ for epoch in range(EPOCHS):
         )
         break
     
+print()
+print("Training finished.")
+print(
+    f"Best validation accuracy: "
+    f"{best_accuracy * 100:.2f}%"
+)
+print(f"Model saved to: {model_path}")
+    
+plt.figure()
 plt.plot(train_losses, label="Train Loss")
 plt.plot(validation_losses, label="Validation Loss")
 plt.xlabel("Epochs")
@@ -81,9 +123,11 @@ plt.ylabel("Loss Values")
 plt.title("Training and Validation Loss")
 plt.legend()
 plt.show()
+
+plt.figure()
 plt.plot([val_accuracy * 100 for val_accuracy in validation_accuracies], label="Validation Accuracy")
 plt.xlabel("Epochs")
 plt.ylabel("Accuracy (%)")
-plt.title("Validation Accuracy")
+plt.title(f"{model_name}: Validation Accuracy")
 plt.legend()
 plt.show()

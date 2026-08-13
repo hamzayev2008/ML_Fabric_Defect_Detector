@@ -1,18 +1,19 @@
 import torch.nn as nn
 from torchvision import models
-from config import MODEL_NAME
+from config import MODEL_RESNET18_NAME, MODEL_RESNET50_NAME
 
 WEIGHTS = {
-    "resnet18": models.ResNet18_Weights.DEFAULT,
-    "resnet50": models.ResNet50_Weights.DEFAULT,
+    MODEL_RESNET18_NAME: models.ResNet18_Weights.DEFAULT,
+    MODEL_RESNET50_NAME: models.ResNet50_Weights.DEFAULT,
 }
 
 class TeddyClassifier(nn.Module):
-    def __init__(self):
+    def __init__(self, model_name=MODEL_RESNET18_NAME):
         super().__init__()
         
-        model_function = getattr(models, MODEL_NAME)
-        self.model = model_function(weights = WEIGHTS[MODEL_NAME])
+        model_function = getattr(models, model_name)
+        
+        self.model = model_function(weights = WEIGHTS[model_name])
         
         self.model.fc = nn.Linear(self.model.fc.in_features, 2)
 
