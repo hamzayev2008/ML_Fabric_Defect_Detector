@@ -16,33 +16,41 @@ The system can:
 
 - load and preprocess teddy bear images;
 - apply data augmentation during training;
-- train a ResNet18-based classifier;
-- validate the model during training;
+- train ResNet18 and ResNet50 classifiers;
+- validate models during training;
 - automatically save the best model;
-- stop training when validation performance stops improving;
-- evaluate the trained model on unseen test images;
-- generate classification metrics;
-- generate a confusion matrix;
+- use early stopping;
+- evaluate models on an unseen test dataset;
+- generate classification reports;
+- generate confusion matrices;
 - identify incorrectly classified images;
-- make predictions on individual images;
-- provide a simple Streamlit interface.
+- perform single-image inference;
+- compare different models;
+- provide a Streamlit interface for interactive predictions.
 
 ---
 
 # 🧠 Model
 
-The project uses **ResNet18** as the image classification backbone.
+The project uses pretrained ResNet architectures from Torchvision:
 
-The model performs binary classification:
+- ResNet18
+- ResNet50
+
+Both models are adapted for binary classification.
+
+The original final classification layer is replaced with:
+
+Linear → 2 classes
+
+The models perform binary classification:
 
 |    Class    |                 Meaning                 |
 |-------------|-----------------------------------------|
 | `normal`    | Teddy bear without the target defect    |
 | `defective` | Teddy bear containing the target defect |
 
-The final classification layer produces two output values (logits), one for each class.
-
-During inference, the predicted class is selected using the class with the highest output score.
+During inference, the model outputs logits which are converted into class probabilities using Softmax.
 
 ---
 
@@ -175,7 +183,7 @@ Normalize
 Tensor
       │
       ▼
-ResNet18
+Model
 ```
 ---
 
@@ -218,7 +226,7 @@ Calculate CrossEntropyLoss
 Backpropagation
     │
     ▼
-Optimizer step
+Adam optimizer step
     │
     ▼
 Calculate training loss
@@ -267,6 +275,26 @@ Validation accuracy shows how well the model performs on data that was not used 
 
 ---
 
+# 🚀 Training the Models
+
+The training script accepts the model name.
+
+ResNet18:
+python src/train.py resnet18
+
+The model is saved as:
+teddy_classifier_resnet18.pth
+
+ResNet50:
+python src/train.py resnet50
+
+The model is saved as:
+teddy_classifier_resnet50.pth
+
+The best checkpoint according to validation accuracy is saved automatically.
+
+---
+
 # 🧪 Model Evaluation
 
 The final model is evaluated using the test dataset.
@@ -283,30 +311,169 @@ The project generates:
 
 ---
 
-# 📈 Current Results
+# 📊 Model Comparison
 
-The current test set contains 26 images.
+The current test results are:
 
-   Metric    |   Result   
--------------|------------
-Accuracy	   |  92.31%
-Precision	   |  0.92
-Recall       |  0.92
-F1-score     |	0.92
-Test samples |	26
-
-The classification report produced by the current model:
+```text
+Metric      	        ResNet18	  ResNet50
+Test Accuracy    	    80.77%	    84.62%
+Normal Precision	    0.72	      0.91
+Normal Recall	        100.00%	    76.92%
+Defective Precision	  1.00	      0.80
+Defective Recall	    61.54%	    92.31%
+Macro F1	            0.80	      0.85
+Wrong Predictions	    5	          4
 ```
-              precision    recall  f1-score   support
 
-normal           0.92      0.92      0.92        13
-defective        0.92      0.92      0.92        13
+### ResNet18
+Confusion Matrix:
 
-accuracy                              0.92        26
-macro avg        0.92      0.92      0.92        26
-weighted avg     0.92      0.92      0.92        26
+```text
+              Predicted
+              normal  defective
+
+normal           13       0
+defective         5       8
 ```
-Note: The current test set is small (26 images). Therefore, these results should be considered experimental rather than production-level performance.
+
+ResNet18 correctly identifies every normal image, but misses 5 defective images.
+
+### ResNet50
+Confusion Matrix:
+
+```text
+              Predicted
+              normal  defective
+
+normal           10       3
+defective         1      12
+```
+
+ResNet50 correctly identifies 12 out of 13 defective images.
+
+## Conclusion
+
+For this particular test set, ResNet50 performs better overall.
+
+The most important difference is defective-class recall:
+
+ResNet18 → 61.54%
+ResNet50 → 92.31%
+
+Since the main purpose of the project is defect detection, ResNet50 is currently the preferred model.
+
+The test set contains only 26 images, so these results should be considered experimental rather than production-level performance.
+
+---
+
+# 🔍 Error Analysis
+
+Incorrect predictions are collected during evaluation.
+
+For each wrong prediction, the project stores:
+
+- image path;
+- actual class;
+- predicted class.
+
+Example:
+
+Actual: normal
+Predicted: defective
+
+Actual: defective
+Predicted: normal
+
+These images can be visualized to understand what types of examples are difficult for the model.
+
+Error analysis can help identify:
+
+- ambiguous images;
+- difficult defect types;
+- dataset problems;
+- insufficient training examples;
+- possible model weaknesses.
+
+---
+
+# 🎯 Single Image Prediction
+
+Single-image inference is implemented in:
+
+```text
+src/predict.py
+
+The prediction process is:
+
+Input Image
+     ↓
+Preprocessing
+     ↓
+Selected Model
+     ↓
+Logits
+     ↓
+Softmax
+     ↓
+Class Probabilities
+     ↓
+Predicted Class
+```
+
+The prediction function returns:
+
+- Predicted class
+- Confidence
+- Probability of normal
+- Probability of defective
+
+For example:
+
+Prediction: defective
+
+Normal: 7.69%
+Defective: 92.31%
+
+---
+
+# 🖥️ Streamlit Application
+
+The project includes an interactive Streamlit interface:
+src/app.py
+
+Run it with:
+streamlit run src/app.py
+
+The interface allows the user to:
+
+- select ResNet18 or ResNet50;
+- upload an image;
+- analyze the image;
+- view the uploaded image;
+- see the prediction;
+- see the confidence score;
+- see probabilities for both classes;
+- see which model was used;
+- visualize the ML pipeline.
+
+The interface displays the processing pipeline:
+
+```text
+📷 Input Image
+      ↓
+🔄 Resize
+      ↓
+🔢 ToTensor
+      ↓
+📊 Normalize
+      ↓
+🧠 ResNet
+      ↓
+⚡ Softmax
+      ↓
+🎯 Prediction
+```
 
 ---
 
@@ -324,30 +491,6 @@ The matrix shows:
 - defective images classified as normal.
 
 This makes it possible to understand not only the overall accuracy, but also the types of mistakes made by the model.
-
----
-
-# 🔍 Error Analysis
-
-Incorrect predictions are automatically collected during evaluation.
-
-For each incorrect prediction, the project stores:
-
-- Image path
-- Actual class
-- Predicted class
-
-The incorrectly classified images can then be visualized to understand where the model makes mistakes.
-
-Example:
-```text
-┌──────────────────┬──────────────────┐
-│ Actual: normal   │ Actual: defective│
-│ Predicted:       │ Predicted:       │
-│ defective        │ normal           │
-└──────────────────┴──────────────────┘
-```
-Error analysis is useful for finding problems in the dataset and understanding limitations of the model.
 
 ---
 
@@ -527,6 +670,7 @@ streamlit run src/app.py
 - PyTorch
 - Torchvision
 - ResNet18
+- ResNet50
 - OpenCV
 - NumPy
 - Pandas
