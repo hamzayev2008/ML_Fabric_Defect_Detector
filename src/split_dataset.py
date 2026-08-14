@@ -1,43 +1,141 @@
-import os
-from sklearn.model_selection import train_test_split
-from config import CLASSES, DATASET_PATH
+from pathlib import Path
+import random
 import shutil
 
-images = []
-labels = []
+SOURCE_DIR = Path("StitchingNet")
+OUTPUT_DIR = Path("fabric_dataset")
 
-for label, class_name in enumerate(CLASSES):
-    class_path = os.path.join(DATASET_PATH, class_name)
-    for image_name in os.listdir(class_path):
-        image_path = os.path.join(class_path, image_name)
-        images.append(image_path)
-        labels.append(label)
-                
-train_images, temp_images, train_labels, temp_labels = train_test_split(
-    images, labels, test_size=0.2, random_state=42, stratify=labels
-)
+TRAIN_RATIO = 0.70
+VALIDATION_RATIO = 0.15
+TEST_RATIO = 0.15
 
-validate_images, test_images, validate_labels, test_labels = train_test_split(
-    temp_images, temp_labels, test_size=0.5, random_state=42, stratify=temp_labels
-)
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 
-os.makedirs("train_dataset", exist_ok=True)
-for image_path, label in zip(train_images, train_labels):
-    class_name = CLASSES[label]
-    class_path = os.path.join("train_dataset", class_name)
-    os.makedirs(class_path, exist_ok=True)
-    shutil.copy(image_path, class_path)
+RANDOM_SEED = 42
 
-os.makedirs("validation_dataset", exist_ok=True)
-for image_path, label in zip(validate_images, validate_labels):
-    class_name = CLASSES[label]
-    class_path = os.path.join("validation_dataset", class_name)
-    os.makedirs(class_path, exist_ok=True)
-    shutil.copy(image_path, class_path)
+random.seed(RANDOM_SEED)
 
-os.makedirs("test_dataset", exist_ok=True)
-for image_path, label in zip(test_images, test_labels):
-    class_name = CLASSES[label]
-    class_path = os.path.join("test_dataset", class_name)
-    os.makedirs(class_path, exist_ok=True)
-    shutil.copy(image_path, class_path)
+def get_images(folder):
+    return [
+        file
+        for file in folder.iterdir()
+        if file.is_file()
+        and file.suffix.lower() in IMAGE_EXTENSIONS
+    ]
+
+
+def copy_images(images, destination):
+    destination.mkdir(parents=True, exist_ok=True)
+
+    for image in images:
+        shutil.copy2(image, destination / image.name)
+
+def main():
+
+    if not SOURCE_DIR.exists():
+        raise FileNotFoundError(f"Dataset not found: {SOURCE_DIR}")
+
+    if OUTPUT_DIR.exists():
+        raise FileExistsError(
+            f"Output directory already exists: {OUTPUT_DIR}\n"
+            "Delete it manually if you want to create the split again."
+        )
+
+    fabrics = [
+        folder
+        for folder in SOURCE_DIR.iterdir()
+        if folder.is_dir()
+    ]
+
+    total_images = 0
+
+    print("=" * 70)
+    print("FABRIC DATASET SPLIT")
+    print("=" * 70)
+
+    for fabric_dir in sorted(fabrics):
+
+        defect_dirs = [
+            folder
+            for folder in fabric_dir.iterdir()
+            if folder.is_dir()
+        ]
+
+        for defect_dir in sorted(defect_dirs):
+
+            images = get_images(defect_dir)
+
+            if not images:
+                continue
+
+            random.shuffle(images)
+
+            total = len(images)
+
+            train_count = int(total * TRAIN_RATIO)
+            validation_count = int(total * VALIDATION_RATIO)
+
+            train_images = images[:train_count]
+
+            validation_images = images[
+                train_count:
+                train_count + validation_count
+            ]
+
+            test_images = images[
+                train_count + validation_count:
+            ]
+
+            relative_fabric = fabric_dir.name
+            relative_defect = defect_dir.name
+
+            train_destination = (
+                OUTPUT_DIR
+                / "train"
+                / relative_fabric
+                / relative_defect
+            )
+
+            validation_destination = (
+                OUTPUT_DIR
+                / "validation"
+                / relative_fabric
+                / relative_defect
+            )
+
+            test_destination = (
+                OUTPUT_DIR
+                / "test"
+                / relative_fabric
+                / relative_defect
+            )
+
+            copy_images(train_images, train_destination)
+
+            copy_images(validation_images, validation_destination)
+
+            copy_images(test_images, test_destination)
+
+            total_images += total
+
+            print(
+                f"{fabric_dir.name:<28} "
+                f"{defect_dir.name:<30} "
+                f"{len(train_images):>3} / "
+                f"{len(validation_images):>3} / "
+                f"{len(test_images):>3}"
+            )
+
+    print("=" * 70)
+    print(f"Total images: {total_images}")
+    print("Train: 70%")
+    print("Validation: 15%")
+    print("Test: 15%")
+    print("=" * 70)
+
+    print()
+    print(f"Dataset created at: {OUTPUT_DIR}")
+
+
+if __name__ == "__main__":
+    main()

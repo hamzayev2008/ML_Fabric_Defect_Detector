@@ -43,3 +43,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.bak
+
+# Dataset
+fabric_dataset/
+*.pth
