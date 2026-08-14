@@ -23,7 +23,6 @@ def get_images(folder):
         and file.suffix.lower() in IMAGE_EXTENSIONS
     ]
 
-
 def copy_images(images, destination):
     destination.mkdir(parents=True, exist_ok=True)
 
