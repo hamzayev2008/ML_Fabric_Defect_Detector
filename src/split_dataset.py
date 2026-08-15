@@ -1,140 +1,212 @@
-from pathlib import Path
-import random
 import shutil
+import random
+from pathlib import Path
+from PIL import Image
+import imagehash
 
-SOURCE_DIR = Path("StitchingNet")
-OUTPUT_DIR = Path("fabric_dataset")
-
+SOURCE_DATASET = Path(r"C:\Users\user\Downloads\StitchingNet\StitchingNet")
+OUTPUT_DATASET = Path("fabric_dataset")
 TRAIN_RATIO = 0.70
 VALIDATION_RATIO = 0.15
 TEST_RATIO = 0.15
+SEED = 42
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp",}
+HASH_DISTANCE = 5
 
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
+random.seed(SEED)
 
-RANDOM_SEED = 42
+def get_image_hash(image_path):
+    try:
+        image = Image.open(image_path).convert("RGB")
+        return imagehash.phash(image)
 
-random.seed(RANDOM_SEED)
+    except Exception:
+        return None
 
-def get_images(folder):
-    return [
-        file
-        for file in folder.iterdir()
-        if file.is_file()
-        and file.suffix.lower() in IMAGE_EXTENSIONS
-    ]
+def create_similarity_groups(image_paths):
+    hashes = {}
 
-def copy_images(images, destination):
-    destination.mkdir(parents=True, exist_ok=True)
+    for image_path in image_paths:
+        image_hash = get_image_hash(image_path)
 
-    for image in images:
-        shutil.copy2(image, destination / image.name)
+        if image_hash is not None:
+            hashes[image_path] = image_hash
 
-def main():
+    groups = []
 
-    if not SOURCE_DIR.exists():
-        raise FileNotFoundError(f"Dataset not found: {SOURCE_DIR}")
+    for image_path in image_paths:
 
-    if OUTPUT_DIR.exists():
-        raise FileExistsError(
-            f"Output directory already exists: {OUTPUT_DIR}\n"
-            "Delete it manually if you want to create the split again."
-        )
+        if image_path not in hashes:
+            groups.append([image_path])
+            continue
 
-    fabrics = [
-        folder
-        for folder in SOURCE_DIR.iterdir()
-        if folder.is_dir()
-    ]
+        # Find an existing group whose representative is similar.
+        added_to_group = False
 
-    total_images = 0
+        for group in groups:
 
-    print("=" * 70)
-    print("FABRIC DATASET SPLIT")
-    print("=" * 70)
+            representative = group[0]
 
-    for fabric_dir in sorted(fabrics):
-
-        defect_dirs = [
-            folder
-            for folder in fabric_dir.iterdir()
-            if folder.is_dir()
-        ]
-
-        for defect_dir in sorted(defect_dirs):
-
-            images = get_images(defect_dir)
-
-            if not images:
+            if representative not in hashes:
                 continue
 
-            random.shuffle(images)
+            distance = hashes[image_path] - hashes[representative]
 
-            total = len(images)
+            if distance <= HASH_DISTANCE:
+                group.append(image_path)
+                added_to_group = True
+                break
 
-            train_count = int(total * TRAIN_RATIO)
-            validation_count = int(total * VALIDATION_RATIO)
+        if not added_to_group:
+            groups.append([image_path])
 
-            train_images = images[:train_count]
+    return groups
 
-            validation_images = images[
-                train_count:
-                train_count + validation_count
+
+def split_groups(groups):
+
+    random.shuffle(groups)
+
+    total_images = sum(
+        len(group)
+        for group in groups
+    )
+
+    train_target = total_images * TRAIN_RATIO
+    validation_target = total_images * VALIDATION_RATIO
+
+    train = []
+    validation = []
+    test = []
+
+    train_count = 0
+    validation_count = 0
+
+    for group in groups:
+
+        group_size = len(group)
+
+        # Put the entire group into one split.
+        if train_count + group_size <= train_target:
+
+            train.extend(group)
+            train_count += group_size
+
+        elif validation_count + group_size <= validation_target:
+
+            validation.extend(group)
+            validation_count += group_size
+
+        else:
+
+            test.extend(group)
+
+    return train, validation, test
+
+
+def copy_images(image_paths, split_name, fabric_name, defect_name):
+
+    destination = (
+        OUTPUT_DATASET
+        / split_name
+        / fabric_name
+        / defect_name
+    )
+
+    destination.mkdir(parents=True, exist_ok=True)
+
+    for image_path in image_paths:
+
+        destination_path = (
+            destination
+            / image_path.name
+        )
+
+        counter = 1
+
+        while destination_path.exists():
+
+            destination_path = (
+                destination
+                / f"{image_path.stem}_{counter}"
+                f"{image_path.suffix}"
+            )
+
+            counter += 1
+
+        shutil.copy2(image_path, destination_path)
+
+def main():
+    print("=" * 70)
+    print("LEAKAGE-SAFE FABRIC DATASET SPLIT")
+    print("=" * 70)
+
+    if not SOURCE_DATASET.exists():
+        print(f"ERROR: Dataset not found: " f"{SOURCE_DATASET}")
+        return
+
+    # Remove the previous split.
+    if OUTPUT_DATASET.exists():
+
+        print(f"Removing existing dataset: " f"{OUTPUT_DATASET}")
+
+        shutil.rmtree(OUTPUT_DATASET)
+
+    total_images = 0
+    total_groups = 0
+
+    for fabric_dir in sorted(SOURCE_DATASET.iterdir()):
+
+        if not fabric_dir.is_dir():
+            continue
+
+        fabric_name = fabric_dir.name
+
+        for defect_dir in sorted(fabric_dir.iterdir()):
+
+            if not defect_dir.is_dir():
+                continue
+
+            defect_name = defect_dir.name
+
+            image_paths = [
+                path
+                for path in defect_dir.iterdir()
+                if (
+                    path.is_file()
+                    and path.suffix.lower()
+                    in IMAGE_EXTENSIONS
+                )
             ]
 
-            test_images = images[
-                train_count + validation_count:
-            ]
+            if not image_paths:
+                continue
 
-            relative_fabric = fabric_dir.name
-            relative_defect = defect_dir.name
-
-            train_destination = (
-                OUTPUT_DIR
-                / "train"
-                / relative_fabric
-                / relative_defect
-            )
-
-            validation_destination = (
-                OUTPUT_DIR
-                / "validation"
-                / relative_fabric
-                / relative_defect
-            )
-
-            test_destination = (
-                OUTPUT_DIR
-                / "test"
-                / relative_fabric
-                / relative_defect
-            )
-
-            copy_images(train_images, train_destination)
-
-            copy_images(validation_images, validation_destination)
-
-            copy_images(test_images, test_destination)
-
-            total_images += total
-
+            print()
+            print(f"{fabric_name} / " f"{defect_name}")
+            print(f"Images: {len(image_paths)}")
+            print("Creating similarity groups...")
+            groups = create_similarity_groups(image_paths)
+            print(f"Similarity groups: " f"{len(groups)}")
+            train, validation, test = (split_groups(groups))
             print(
-                f"{fabric_dir.name:<28} "
-                f"{defect_dir.name:<30} "
-                f"{len(train_images):>3} / "
-                f"{len(validation_images):>3} / "
-                f"{len(test_images):>3}"
+                f"Train: {len(train):4d} | "
+                f"Validation: {len(validation):4d} | "
+                f"Test: {len(test):4d}"
             )
-
+            copy_images(train, "train", fabric_name, defect_name)
+            copy_images(validation, "validation", fabric_name, defect_name)
+            copy_images(test, "test", fabric_name, defect_name)
+            total_images += len(image_paths)
+            total_groups += len(groups)
+    print()
+    print("=" * 70)
+    print("SPLIT FINISHED")
     print("=" * 70)
     print(f"Total images: {total_images}")
-    print("Train: 70%")
-    print("Validation: 15%")
-    print("Test: 15%")
+    print(f"Total similarity groups: " f"{total_groups}")
+    print(f"Dataset created at: " f"{OUTPUT_DATASET}")
     print("=" * 70)
-
-    print()
-    print(f"Dataset created at: {OUTPUT_DIR}")
-
 
 if __name__ == "__main__":
     main()

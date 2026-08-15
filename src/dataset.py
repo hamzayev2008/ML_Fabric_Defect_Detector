@@ -3,13 +3,7 @@ from PIL import Image
 from torch.utils.data import Dataset
 from transforms import get_transform
 
-IMAGE_EXTENSIONS = {
-    ".jpg",
-    ".jpeg",
-    ".png",
-    ".bmp",
-    ".webp"
-}
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 
 class FabricDataset(Dataset):
     
