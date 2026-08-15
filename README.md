@@ -489,6 +489,8 @@ src/README.md
 * Python
 * PyTorch
 * Torchvision
+* ResNet18
+* ResNet50
 * Pillow
 * scikit-learn
 * ImageHash
