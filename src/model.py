@@ -1,6 +1,6 @@
 import torch.nn as nn
 from torchvision import models
-from config import (
+from src.config import (
     MODEL_RESNET18_NAME,
     MODEL_RESNET50_NAME,
     FABRIC_CLASSES,

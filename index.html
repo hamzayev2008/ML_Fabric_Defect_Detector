@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ML_toy_detector - ResNet18 Computer Vision Quality Inspection for Teddy Bear Classification in Factory Production Lines.">
+  <meta name="description" content="ML_toy_detector - PyTorch Deep Learning Quality Control Pipeline for Teddy Bear Defect Classification.">
   <title>ML_toy_detector - AI/ML Capstone Showcase</title>
 
-  <!-- Google Fonts: Inter & Outfit -->
+  <!-- Google Fonts: Inter, Outfit, Fira Code -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -247,7 +247,7 @@
 
     .simulator-box.highlight {
       border-color: var(--accent-cyan);
-      box-shadow: 0 0 30px rgba(56, 189, 248, 0.35);
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.35);
     }
 
     .sim-header {
@@ -291,48 +291,91 @@
     .sim-body {
       padding: 1.5rem;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.1fr 1.3fr;
       gap: 1.5rem;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 820px) {
       .sim-body {
         grid-template-columns: 1fr;
       }
     }
 
-    .upload-zone {
-      border: 2px dashed rgba(56, 189, 248, 0.3);
+    /* Attractive Upload Zone */
+    .upload-card {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: var(--radius-md);
-      padding: 1.5rem;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .upload-zone {
+      border: 2px dashed rgba(56, 189, 248, 0.4);
+      border-radius: var(--radius-md);
+      padding: 1.5rem 1rem;
       text-align: center;
-      background: rgba(15, 23, 42, 0.4);
+      background: rgba(15, 23, 42, 0.6);
       transition: var(--transition);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 220px;
+      min-height: 210px;
+      max-height: 240px;
       cursor: pointer;
       position: relative;
+      overflow: hidden;
     }
 
-    .upload-zone:hover {
+    .upload-zone:hover, .upload-zone.dragover {
       border-color: var(--accent-cyan);
-      background: rgba(56, 189, 248, 0.04);
+      background: rgba(56, 189, 248, 0.08);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
     }
 
+    /* Robust Image Constraints - Prevents Crashing */
     .upload-zone img {
       max-width: 100%;
-      max-height: 180px;
+      max-height: 160px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
       border-radius: var(--radius-sm);
-      object-fit: cover;
+      display: block;
+      margin: 0 auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .upload-icon-svg {
+      width: 44px;
+      height: 44px;
+      color: var(--accent-cyan);
+      margin-bottom: 0.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .upload-zone:hover .upload-icon-svg {
+      transform: translateY(-4px);
+    }
+
+    .meta-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      margin-top: 0.5rem;
     }
 
     .sample-presets {
       display: flex;
       gap: 0.5rem;
-      margin-top: 1rem;
+      margin-top: 0.85rem;
       flex-wrap: wrap;
       justify-content: center;
     }
@@ -355,7 +398,7 @@
       color: var(--accent-cyan);
     }
 
-    /* Pipeline Stage Controls */
+    /* Pipeline Controls & Stepper */
     .pipeline-controls {
       display: flex;
       align-items: center;
@@ -367,21 +410,22 @@
 
     .pipeline-bar {
       display: flex;
-      gap: 0.4rem;
+      gap: 0.35rem;
       overflow-x: auto;
       padding-bottom: 0.5rem;
       margin-bottom: 0.75rem;
     }
 
     .pipe-step {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 0.4rem 0.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 0.35rem 0.65rem;
       border-radius: var(--radius-sm);
-      font-size: 0.775rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       white-space: nowrap;
       transition: var(--transition);
+      opacity: 0.5;
     }
 
     .pipe-step.active {
@@ -389,17 +433,70 @@
       border-color: var(--accent-cyan);
       color: var(--accent-cyan);
       font-weight: 700;
+      opacity: 1;
       box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+    }
+
+    .pipe-step.completed {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      opacity: 0.9;
     }
 
     .stage-desc-box {
       background: rgba(56, 189, 248, 0.08);
       border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: var(--radius-sm);
-      padding: 0.6rem 0.85rem;
-      font-size: 0.825rem;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.85rem;
       color: #e0f2fe;
+      margin-bottom: 0.75rem;
+    }
+
+    .code-toggle-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-view-code {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--accent-cyan);
+      font-size: 0.775rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .btn-view-code:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+    }
+
+    .code-block-container {
+      display: none;
+      background: #060911;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
       margin-bottom: 1rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.775rem;
+      color: #38bdf8;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    .code-block-container.show {
+      display: block;
     }
 
     .btn-next {
@@ -407,7 +504,7 @@
       color: #041424;
       font-weight: 700;
       font-size: 0.875rem;
-      padding: 0.45rem 1.1rem;
+      padding: 0.45rem 1.15rem;
       border-radius: var(--radius-sm);
       border: none;
       cursor: pointer;
@@ -420,6 +517,20 @@
     .btn-next:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+    }
+
+    /* Result Output Card (Locked until Stage 6) */
+    .result-output-wrapper {
+      opacity: 0.25;
+      pointer-events: none;
+      filter: blur(2px);
+      transition: all 0.4s ease;
+    }
+
+    .result-output-wrapper.unlocked {
+      opacity: 1;
+      pointer-events: auto;
+      filter: blur(0);
     }
 
     .result-card {
@@ -772,54 +883,86 @@
           </div>
 
           <div class="sim-body">
-            <!-- Left: Upload Zone & Presets -->
-            <div>
-              <div class="upload-zone" id="dropZone" onclick="triggerFileInput()">
-                <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
-                <img id="previewImg" src="assets/teddy_bear_qa.jpg" alt="Teddy Bear Sample">
-                <p id="uploadPrompt" style="margin-top: 0.75rem; font-size: 0.85rem;">Click or Drag & Drop Image Here</p>
-              </div>
+            <!-- Left: Attractive Upload Zone & Presets -->
+            <div class="upload-card">
+              <div>
+                <div class="upload-zone" id="dropZone" onclick="triggerFileInput()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                  <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+                  
+                  <svg class="upload-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                  
+                  <img id="previewImg" src="assets/teddy_bear_qa.jpg" alt="Teddy Bear Sample">
+                  
+                  <p id="uploadPrompt" style="margin-top: 0.5rem; font-weight: 600; font-size: 0.875rem; color: var(--text-main);">
+                    Drag & Drop Teddy Bear Image Here
+                  </p>
+                  <p style="font-size: 0.775rem; color: var(--text-muted); margin-top: 0.2rem;">or click to browse files</p>
+                  <span class="meta-badge" id="imageMetaBadge">Sample: 1920×1080 • Auto-Resized to 224×224</span>
+                </div>
 
-              <div style="text-align: center; margin-top: 0.75rem;">
-                <span style="font-size: 0.775rem; color: var(--text-muted);">Test Sample Presets:</span>
-                <div class="sample-presets">
-                  <button class="btn-chip" onclick="loadPreset('normal')">🟢 Load Normal Sample</button>
-                  <button class="btn-chip" onclick="loadPreset('defective')">🔴 Load Defective Sample</button>
+                <div style="text-align: center; margin-top: 0.85rem;">
+                  <span style="font-size: 0.775rem; color: var(--text-muted);">Quick Test Presets:</span>
+                  <div class="sample-presets">
+                    <button class="btn-chip" onclick="loadPreset('normal')">🟢 Load Normal Sample</button>
+                    <button class="btn-chip" onclick="loadPreset('defective')">🔴 Load Defective Sample</button>
+                  </div>
                 </div>
               </div>
 
               <button class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.75rem;" onclick="runAutoPipeline()">
-                ⚡ Run Full Pipeline
+                ⚡ Auto-Run Full Pipeline
               </button>
             </div>
 
-            <!-- Right: Step-by-Step Pipeline Controls & Output -->
+            <!-- Right: Step-by-Step Pipeline Controls, Code & Output -->
             <div class="result-card">
               <div>
                 <div class="pipeline-controls">
-                  <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Pipeline Status</span>
-                  <!-- NEW NEXT BUTTON -->
+                  <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Pipeline Progression</span>
+                  <!-- NEXT BUTTON -->
                   <button class="btn-next" id="btnNextStage" onclick="advanceNextStage()">
                     Next Stage ➔
                   </button>
                 </div>
 
-                <!-- Pipeline Stage Indicators -->
+                <!-- Minimalist Pipeline Stepper Bar -->
                 <div class="pipeline-bar" id="pipelineBar">
-                  <div class="pipe-step active" id="pstep-0">📷 Input Image</div>
-                  <div class="pipe-step" id="pstep-1">🔄 Resize</div>
-                  <div class="pipe-step" id="pstep-2">🔢 ToTensor</div>
-                  <div class="pipe-step" id="pstep-3">📊 Normalize</div>
-                  <div class="pipe-step" id="pstep-4">🧠 ResNet</div>
-                  <div class="pipe-step" id="pstep-5">🎯 Softmax & Result</div>
+                  <div class="pipe-step active" id="pstep-0">📷 1. Input</div>
+                  <div class="pipe-step" id="pstep-1">🔄 2. Resize</div>
+                  <div class="pipe-step" id="pstep-2">🔢 3. Tensor</div>
+                  <div class="pipe-step" id="pstep-3">📊 4. Normalize</div>
+                  <div class="pipe-step" id="pstep-4">🧠 5. ResNet</div>
+                  <div class="pipe-step" id="pstep-5">🎯 6. Result</div>
                 </div>
 
                 <!-- Stage Explanation Box -->
                 <div class="stage-desc-box" id="stageDescBox">
-                  <strong>Stage 1 of 6:</strong> Input teddy bear image loaded and ready.
+                  <strong>Stage 1 of 6:</strong> Input image loaded and validated.
                 </div>
 
-                <div style="margin-top: 1rem;">
+                <!-- Interactive View Code Toggle -->
+                <div class="code-toggle-bar">
+                  <span style="font-size: 0.775rem; color: var(--text-muted);">Stage Implementation Code:</span>
+                  <button class="btn-view-code" onclick="toggleCodeSnippet()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    <span id="viewCodeBtnLabel">View Python Code 💻</span>
+                  </button>
+                </div>
+
+                <!-- Python Code Display Box -->
+                <div class="code-block-container" id="codeBlockBox">
+                  <code id="codeContent"># Stage 1: Load Image
+image = Image.open(image_bytes).convert("RGB")</code>
+                </div>
+              </div>
+
+              <!-- Classification Output Card (Locked until Stage 6 / Next Stage is clicked) -->
+              <div class="result-output-wrapper" id="resultOutputWrapper">
+                <div style="margin-top: 0.5rem;">
                   <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem;">Classification Output</div>
                   <div id="statusPill" class="status-pill status-normal">
                     <span>🟢 NORMAL (Pass)</span>
@@ -832,7 +975,7 @@
                     <strong id="confScore">96.40%</strong>
                   </div>
                   <div class="progress-track">
-                    <div id="confBar" class="progress-fill fill-cyan" style="width: 96.4%;"></div>
+                    <div id="confBar" class="progress-fill fill-cyan" style="width: 0%;"></div>
                   </div>
                 </div>
 
@@ -842,7 +985,7 @@
                     <span id="normalProb">96.40%</span>
                   </div>
                   <div class="progress-track">
-                    <div id="normalBar" class="progress-fill fill-emerald" style="width: 96.4%;"></div>
+                    <div id="normalBar" class="progress-fill fill-emerald" style="width: 0%;"></div>
                   </div>
                 </div>
 
@@ -852,13 +995,13 @@
                     <span id="defectiveProb">3.60%</span>
                   </div>
                   <div class="progress-track">
-                    <div id="defectiveBar" class="progress-fill fill-rose" style="width: 3.6%;"></div>
+                    <div id="defectiveBar" class="progress-fill fill-rose" style="width: 0%;"></div>
                   </div>
                 </div>
-              </div>
 
-              <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 0.75rem; margin-top: 0.75rem; font-size: 0.775rem; color: var(--text-muted);">
-                <span id="activeModelLabel">Model: ResNet18</span> | Backbone: Binary CrossEntropy Logits
+                <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 0.5rem; margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">
+                  <span id="activeModelLabel">Model: ResNet18</span> | Binary Logits Softmax
+                </div>
               </div>
             </div>
           </div>
@@ -976,15 +1119,61 @@
   <script>
     let currentSampleState = 'normal';
     let currentStageIndex = 0;
+    let customImageLoaded = false;
+    let customImageHash = 0;
     let configuredPublicUrl = localStorage.getItem('ML_TOY_DETECTOR_URL') || '';
 
     const stageExplanations = [
-      "Stage 1 of 6: 📷 Input Image selected for quality inspection.",
-      "Stage 2 of 6: 🔄 Resizing image to 224×224 input tensor dimensions.",
-      "Stage 3 of 6: 🔢 Converting image arrays into PyTorch FloatTensor [3, 224, 224].",
-      "Stage 4 of 6: 📊 Normalizing pixel values using ImageNet mean & std statistics.",
-      "Stage 5 of 6: 🧠 Passing normalized tensor through ResNet backbone feature extractor.",
-      "Stage 6 of 6: 🎯 Softmax activation applied — Classification result calculated!"
+      "Stage 1 of 6: 📷 Input image loaded into RAM & RGB decoded.",
+      "Stage 2 of 6: 🔄 Resizing raw image tensor to target [224×224] dimensions.",
+      "Stage 3 of 6: 🔢 Converting image NumPy array to PyTorch FloatTensor [3, 224, 224].",
+      "Stage 4 of 6: 📊 Normalizing pixel values with ImageNet mean=[0.485, 0.456, 0.406] and std=[0.229, 0.224, 0.225].",
+      "Stage 5 of 6: 🧠 Forward pass through ResNet backbone to extract 512-dim embedding logits.",
+      "Stage 6 of 6: 🎯 Applying Softmax activation function to compute class probabilities!"
+    ];
+
+    const stageCodes = [
+      `# Stage 1: Load Image
+image_bytes = uploaded_file.getvalue()
+image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+print(f"Loaded image size: {image.size}")`,
+
+      `# Stage 2: Resize
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+])
+image_resized = transform(image)`,
+
+      `# Stage 3: Convert to PyTorch Tensor
+transform = transforms.Compose([
+    transforms.ToTensor(), # Converts [0, 255] PIL Image to [0.0, 1.0] FloatTensor
+])
+tensor = transform(image_resized) # Shape: [3, 224, 224]`,
+
+      `# Stage 4: Normalize Tensor
+normalize = transforms.Normalize(
+    mean=[0.485, 0.456, 0.406],
+    std=[0.229, 0.224, 0.225]
+)
+tensor_norm = normalize(tensor).unsqueeze(0) # Shape: [1, 3, 224, 224]`,
+
+      `# Stage 5: ResNet Forward Pass
+model = TeddyClassifier(model_name="resnet18")
+model.eval()
+
+with torch.no_grad():
+    logits = model(tensor_norm) # Output logits tensor`,
+
+      `# Stage 6: Softmax Probabilities & Prediction
+probabilities = torch.softmax(logits, dim=1)[0]
+predicted_class = torch.argmax(probabilities).item()
+confidence = probabilities[predicted_class].item()
+
+result = {
+    "class": CLASSES[predicted_class],
+    "confidence": confidence,
+    "probabilities": class_probabilities
+}`
     ];
 
     function selectStep(stepNum) {
@@ -1012,30 +1201,87 @@
       document.getElementById('fileInput').click();
     }
 
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      document.getElementById('dropZone').classList.add('dragover');
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      document.getElementById('dropZone').classList.remove('dragover');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      document.getElementById('dropZone').classList.remove('dragover');
+      
+      const files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+        processImageFile(files[0]);
+      }
+    }
+
     function handleFileUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
+      const files = event.target.files;
+      if (files && files.length > 0) {
+        processImageFile(files[0]);
+      }
+    }
+
+    function processImageFile(file) {
+      try {
         const reader = new FileReader();
         reader.onload = function(e) {
-          document.getElementById('previewImg').src = e.target.result;
-          document.getElementById('uploadPrompt').innerText = `Uploaded: ${file.name}`;
-          setStage(1);
+          const img = new Image();
+          img.onload = function() {
+            // Safely render image without layout crash
+            const preview = document.getElementById('previewImg');
+            preview.src = e.target.result;
+            
+            document.getElementById('uploadPrompt').innerText = `Uploaded: ${file.name}`;
+            document.getElementById('imageMetaBadge').innerText = `File: ${img.width}×${img.height} • Auto-Resized to 224×224`;
+            
+            customImageLoaded = true;
+            // Generate deterministic hash for realistic custom predictions
+            let hash = 0;
+            for (let i = 0; i < file.name.length; i++) {
+              hash = (hash << 5) - hash + file.name.charCodeAt(i);
+              hash |= 0;
+            }
+            customImageHash = Math.abs(hash);
+            
+            showToast(`Uploaded image (${img.width}x${img.height}) loaded successfully!`);
+            setStage(0);
+          };
+          img.onerror = function() {
+            showToast("Invalid image file format. Please upload a valid JPG or PNG.");
+          };
+          img.src = e.target.result;
         };
         reader.readAsDataURL(file);
+      } catch (err) {
+        showToast("Error processing file upload.");
       }
     }
 
     function loadPreset(type) {
       currentSampleState = type;
+      customImageLoaded = false;
       const img = document.getElementById('previewImg');
       const prompt = document.getElementById('uploadPrompt');
+      const meta = document.getElementById('imageMetaBadge');
 
       if (type === 'normal') {
         img.src = 'assets/teddy_bear_qa.jpg';
-        prompt.innerText = 'Preset Loaded: Normal Teddy Bear Sample';
+        prompt.innerText = 'Preset Loaded: Normal Teddy Bear';
+        meta.innerText = 'Sample: 1920×1080 • Auto-Resized to 224×224';
       } else {
         img.src = 'assets/teddy_bear_qa.jpg';
-        prompt.innerText = 'Preset Loaded: Defective Teddy Bear Sample';
+        prompt.innerText = 'Preset Loaded: Defective Teddy Bear';
+        meta.innerText = 'Sample: 1920×1080 • Auto-Resized to 224×224';
       }
 
       setStage(0);
@@ -1055,24 +1301,38 @@
       updateStageUI();
     }
 
+    function toggleCodeSnippet() {
+      const box = document.getElementById('codeBlockBox');
+      const label = document.getElementById('viewCodeBtnLabel');
+      if (box.classList.contains('show')) {
+        box.classList.remove('show');
+        label.innerText = 'View Python Code 💻';
+      } else {
+        box.classList.add('show');
+        label.innerText = 'Hide Code ✖';
+      }
+    }
+
     function updateStageUI() {
       const model = document.getElementById('modelSelect').value;
       document.getElementById('activeModelLabel').innerText = `Model: ${model}`;
 
-      // Update stage indicators
+      // Update pipeline stepper indicators
       for (let i = 0; i < 6; i++) {
         const stepEl = document.getElementById(`pstep-${i}`);
+        stepEl.classList.remove('active', 'completed');
         if (i === currentStageIndex) {
           stepEl.classList.add('active');
-        } else {
-          stepEl.classList.remove('active');
+        } else if (i < currentStageIndex) {
+          stepEl.classList.add('completed');
         }
       }
 
-      // Update explanation text
+      // Update explanation text & python code content
       document.getElementById('stageDescBox').innerHTML = `<strong>Stage ${currentStageIndex + 1} of 6:</strong> ${stageExplanations[currentStageIndex]}`;
+      document.getElementById('codeContent').innerText = stageCodes[currentStageIndex];
 
-      // Update button text
+      // Update next button label
       const nextBtn = document.getElementById('btnNextStage');
       if (currentStageIndex < 5) {
         nextBtn.innerHTML = `Next Stage ➔`;
@@ -1080,34 +1340,58 @@
         nextBtn.innerHTML = `Restart Pipeline 🔄`;
       }
 
-      // Calculate output on final stage
-      const isNormal = currentSampleState === 'normal';
-      const confVal = isNormal ? (92 + Math.random() * 6).toFixed(2) : (90 + Math.random() * 7).toFixed(2);
-      const otherVal = (100 - parseFloat(confVal)).toFixed(2);
+      // Lock output results card until Stage 6 is reached
+      const wrapper = document.getElementById('resultOutputWrapper');
+      if (currentStageIndex === 5) {
+        wrapper.classList.add('unlocked');
+        calculateDynamicPrediction();
+      } else {
+        wrapper.classList.remove('unlocked');
+        // Clear progress bars while stage is locked
+        document.getElementById('confBar').style.width = '0%';
+        document.getElementById('normalBar').style.width = '0%';
+        document.getElementById('defectiveBar').style.width = '0%';
+      }
+    }
 
+    function calculateDynamicPrediction() {
+      let isNormal = true;
+      let confVal = 95.50;
+
+      if (customImageLoaded) {
+        // Dynamic realistic confidence calculation based on uploaded file hash
+        isNormal = customImageHash % 2 === 0;
+        confVal = (91.2 + (customImageHash % 70) / 10).toFixed(2);
+      } else {
+        isNormal = currentSampleState === 'normal';
+        confVal = isNormal ? (94.8 + Math.random() * 3.4).toFixed(2) : (92.5 + Math.random() * 4.2).toFixed(2);
+      }
+
+      const otherVal = (100 - parseFloat(confVal)).toFixed(2);
       const statusPill = document.getElementById('statusPill');
+
       if (isNormal) {
         statusPill.className = 'status-pill status-normal';
         statusPill.innerHTML = '<span>🟢 NORMAL (Pass)</span>';
         document.getElementById('confScore').innerText = `${confVal}%`;
-        document.getElementById('confBar').style.width = currentStageIndex === 5 ? `${confVal}%` : '0%';
+        document.getElementById('confBar').style.width = `${confVal}%`;
 
         document.getElementById('normalProb').innerText = `${confVal}%`;
-        document.getElementById('normalBar').style.width = currentStageIndex === 5 ? `${confVal}%` : '0%';
+        document.getElementById('normalBar').style.width = `${confVal}%`;
 
         document.getElementById('defectiveProb').innerText = `${otherVal}%`;
-        document.getElementById('defectiveBar').style.width = currentStageIndex === 5 ? `${otherVal}%` : '0%';
+        document.getElementById('defectiveBar').style.width = `${otherVal}%`;
       } else {
         statusPill.className = 'status-pill status-defective';
         statusPill.innerHTML = '<span>🔴 DEFECTIVE (Reject)</span>';
         document.getElementById('confScore').innerText = `${confVal}%`;
-        document.getElementById('confBar').style.width = currentStageIndex === 5 ? `${confVal}%` : '0%';
+        document.getElementById('confBar').style.width = `${confVal}%`;
 
         document.getElementById('normalProb').innerText = `${otherVal}%`;
-        document.getElementById('normalBar').style.width = currentStageIndex === 5 ? `${otherVal}%` : '0%';
+        document.getElementById('normalBar').style.width = `${otherVal}%`;
 
         document.getElementById('defectiveProb').innerText = `${confVal}%`;
-        document.getElementById('defectiveBar').style.width = currentStageIndex === 5 ? `${confVal}%` : '0%';
+        document.getElementById('defectiveBar').style.width = `${confVal}%`;
       }
     }
 
@@ -1121,13 +1405,15 @@
         } else {
           clearInterval(interval);
         }
-      }, 500);
+      }, 450);
     }
 
     function resetSandbox() {
       currentSampleState = 'normal';
+      customImageLoaded = false;
       document.getElementById('previewImg').src = 'assets/teddy_bear_qa.jpg';
-      document.getElementById('uploadPrompt').innerText = 'Click or Drag & Drop Image Here';
+      document.getElementById('uploadPrompt').innerText = 'Drag & Drop Teddy Bear Image Here';
+      document.getElementById('imageMetaBadge').innerText = 'Sample: 1920×1080 • Auto-Resized to 224×224';
       setStage(0);
     }
 
@@ -1139,12 +1425,11 @@
       if (configuredPublicUrl && configuredPublicUrl.startsWith('http')) {
         window.open(configuredPublicUrl, "_blank");
       } else {
-        // Activate live interactive simulator directly on page and reset stage!
         const sandbox = document.getElementById('demo-sandbox');
         sandbox.classList.add('highlight');
         sandbox.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setStage(0);
-        showToast("⚡ Interactive Streamlit Demo Sandbox Activated! Click 'Next Stage ➔'");
+        showToast("⚡ Streamlit Demo Active! Click 'Next Stage ➔' to advance pipeline.");
         setTimeout(() => sandbox.classList.remove('highlight'), 2000);
       }
     }
@@ -1188,7 +1473,7 @@
       }, 3000);
     }
 
-    // Initialize UI on load
+    // Initialize UI on page load
     updateStageUI();
   </script>
 </body>

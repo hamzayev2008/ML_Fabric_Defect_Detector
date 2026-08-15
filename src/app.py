@@ -1,10 +1,15 @@
+import time
 import streamlit as st
-from image_utils import load_image_from_bytes
-from predict import predict
-from transforms import get_transform
-from config import IMAGE_SIZE
+from src.image_utils import load_image_from_bytes
+from src.predict import predict
+from src.transforms import get_transform
+from src.config import IMAGE_SIZE
 
-st.set_page_config(page_title="Fabric Defect Detector", page_icon="🧵", layout="wide")
+st.set_page_config(page_title="Fabric Defect Detector", page_icon="🧵", layout="wide",)
+
+# ============================================================
+# STYLING
+# ============================================================
 
 st.markdown(
     """
@@ -12,190 +17,351 @@ st.markdown(
 
     .main-title {
         text-align: center;
-        margin-bottom: 5px;
+        font-size: 2.4rem;
+        font-weight: 700;
+        margin-bottom: 0;
     }
 
     .main-subtitle {
         text-align: center;
-        margin-bottom: 35px;
+        color: #888;
+        margin-top: 4px;
+        margin-bottom: 18px;
+    }
+
+    .upload-box {
+        border: 2px dashed #4a90e2;
+        border-radius: 14px;
+        padding: 18px;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+
+    .stage-code {
+        background-color: rgba(128, 128, 128, 0.10);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .stage-title {
+        font-weight: 600;
+        font-size: 1.05rem;
     }
 
     </style>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
+)
+
+# ============================================================
+# TITLE
+# ============================================================
+
+st.markdown(
+    '<div class="main-title">🧵 Fabric Defect Detector</div>',
+    unsafe_allow_html=True,
 )
 
 st.markdown(
-    '<h1 class="main-title">🧵 Fabric Defect Detector</h1>',
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    '<p class="main-subtitle">'
-    'Fabric Material and Defect Classification'
-    '</p>',
-    unsafe_allow_html=True
+    '<div class="main-subtitle">'
+    'Fabric material and defect classification using ResNet'
+    '</div>',
+    unsafe_allow_html=True,
 )
 
 # ============================================================
-# MODEL SELECTION
+# CONTROLS
 # ============================================================
 
-_, center, _ = st.columns([1, 2, 1])
+control_col1, control_col2, control_col3 = st.columns([1.2, 2.5, 1.5])
 
-with center:
+with control_col1:
 
-    model_name = st.selectbox("Select Model", ["ResNet18", "ResNet50"])
+    model_name = st.selectbox("🧠 Model", ["ResNet18", "ResNet50"],)
 
-# ============================================================
-# IMAGE UPLOAD
-# ============================================================
+with control_col2:
 
-_, center, _ = st.columns([1, 2, 1])
+    uploaded_file = st.file_uploader("📤 Upload fabric image", type=["jpg", "jpeg", "png", "bmp", "webp",], help="Upload an image of fabric to analyze.",)
 
-with center:
 
-    uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png", "bmp", "webp"])
+with control_col3:
 
-# ============================================================
-# ANALYZE BUTTON
-# ============================================================
+    st.write("")
 
-_, center, _ = st.columns([1, 2, 1])
-
-with center:
-
-    analyze = st.button("🔍 Analyze Image", use_container_width=True)
+    analyze = st.button("🔍 Analyze Image", use_container_width=True, type="primary",)
 
 # ============================================================
-# ML PIPELINE
+# PIPELINE DEFINITIONS
 # ============================================================
 
-if uploaded_file is not None:
+PIPELINE = [
+    ("prepare_image", "📷", "Input / Preprocessing"),
+    ("load_model", "🧠", "Load Model"),
+    ("resnet", "⚡", "ResNet Feature Extraction"),
+    ("fabric", "🧵", "Fabric Classification"),
+    ("defect", "🔧", "Defect Classification"),
+    ("prediction", "🎯", "Final Prediction"),
+]
 
-    st.subheader("🔄 ML Pipeline")
+STAGE_CODE = {
 
-    pipeline = [
-        "📷 Input Image",
-        "🔄 Resize",
-        "🔢 ToTensor",
-        "📊 Normalize",
-        "🧠 ResNet",
-        "🧵 Fabric",
-        "🔧 Defect",
-        "🎯 Prediction",
-    ]
+    "prepare_image": """image = image.to(device)
 
-    cols = st.columns(len(pipeline))
+if image.dim() == 3:
+    image = image.unsqueeze(0)""",
 
-    for col, step in zip(cols, pipeline):
+    "load_model": """model = FabricDefectClassifier(model_name)
 
-        with col:
-            st.info(step)
+state_dict = torch.load(
+    MODEL_PATHS[model_name],
+    map_location=device
+)
 
+model.load_state_dict(state_dict)
+model.eval()""",
+
+    "resnet": """features = model.model(image)""",
+
+    "fabric": """fabric_output = model.fabric_classifier(features)
+
+fabric_probabilities = F.softmax(
+    fabric_output,
+    dim=1
+)
+
+fabric_confidence, fabric_index = torch.max(
+    fabric_probabilities,
+    dim=1
+)""",
+
+    "defect": """defect_output = model.defect_classifier(features)
+
+defect_probabilities = F.softmax(
+    defect_output,
+    dim=1
+)
+
+defect_confidence, defect_index = torch.max(
+    defect_probabilities,
+    dim=1
+)""",
+
+    "prediction": """fabric_index = fabric_index.item()
+defect_index = defect_index.item()
+
+fabric = FABRIC_CLASSES[fabric_index]
+defect = DEFECT_CLASSES[defect_index]""",
+}
 
 # ============================================================
-# IMAGE + RESULT
+# PIPELINE UI
+# ============================================================
+
+pipeline_placeholder = st.empty()
+
+def render_pipeline(current_stage=None, completed=None):
+
+    if completed is None:
+        completed = set()
+
+    with pipeline_placeholder.container():
+
+        st.markdown("### 🔄 ML Pipeline")
+
+        cols = st.columns(len(PIPELINE))
+
+        for col, (stage_id, icon, title) in zip(cols, PIPELINE):
+
+            with col:
+
+                if stage_id in completed:
+                    st.success(f"{icon} {title}\n\n✓ Done")
+
+                elif stage_id == current_stage:
+                    st.warning(f"{icon} {title}\n\n⏳ Running...")
+
+                else:
+                    st.info(f"{icon} {title}\n\nWaiting")
+
+# ============================================================
+# INITIAL PIPELINE
+# ============================================================
+
+render_pipeline()
+
+# ============================================================
+# MAIN WORKSPACE
 # ============================================================
 
 if uploaded_file is not None:
 
     image_bytes = uploaded_file.getvalue()
 
-    transform = get_transform(augmentation=False)
-
-    col1, col2 = st.columns(2, gap="large")
+    workspace_left, workspace_right = st.columns([1.05, 1.4], gap="large",)
 
     # ========================================================
-    # INPUT IMAGE
+    # IMAGE
     # ========================================================
 
-    with col1:
+    with workspace_left:
 
-        st.subheader("📷 Input Image")
-        st.image(image_bytes, use_container_width=True)
+        st.markdown("### 📷 Input Image")
+        st.image(image_bytes, use_container_width=True,)
+        st.caption(f"File: {uploaded_file.name}")
 
     # ========================================================
-    # ANALYSIS RESULT
+    # PROCESS + RESULTS
     # ========================================================
 
-    with col2:
+    with workspace_right:
 
-        with st.container(border=True):
+        process_placeholder = st.empty()
+        result_placeholder = st.empty()
 
-            st.subheader("🔍 Analysis Result")
+        if analyze:
 
-            if analyze:
+            completed_stages = set()
 
-                image = load_image_from_bytes(image_bytes, image_size=IMAGE_SIZE, transform=transform)
-                results = predict(image, model_name.lower())
+            transform = get_transform(augmentation=False)
 
-                # =================================================
-                # FABRIC RESULT
-                # =================================================
+            # ------------------------------------------------
+            # CALLBACK
+            # ------------------------------------------------
 
-                st.subheader("🧵 Fabric")
-                st.success(f"Prediction: {results['fabric']}")
-                st.metric("Confidence", f"{results['fabric_confidence'] * 100:.2f}%")
-                st.progress(results["fabric_confidence"])
+            def update_stage(stage_id, message):
 
-                # =================================================
-                # DEFECT RESULT
-                # =================================================
+                completed_stages.add(stage_id)
 
-                st.subheader("🔧 Defect")
-                st.warning(f"Prediction: {results['defect']}")
-                st.metric("Confidence", f"{results['defect_confidence'] * 100:.2f}%")
-                st.progress(results["defect_confidence"])
+                render_pipeline(current_stage=stage_id, completed=completed_stages - {stage_id},)
 
-                # =================================================
-                # FABRIC PROBABILITIES
-                # =================================================
+                with process_placeholder.container():
+
+                    st.markdown("### 💻 Current Process")
+                    st.info(message)
+                    st.code(STAGE_CODE.get(stage_id, "# Processing..."), language="python",)
+
+                # Small delay makes the stages visible
+                # without creating an artificial long animation.
+                time.sleep(0.15)
+
+            # ------------------------------------------------
+            # PREPARE IMAGE
+            # ------------------------------------------------
+
+            update_stage("prepare_image", "Preparing uploaded image...",)
+
+            image = load_image_from_bytes(image_bytes, image_size=IMAGE_SIZE, transform=transform,)
+
+            # ------------------------------------------------
+            # PREDICTION
+            # ------------------------------------------------
+
+            results = predict(image, model_name.lower(), progress_callback=update_stage,)
+
+            # ------------------------------------------------
+            # FINISHED
+            # ------------------------------------------------
+
+            completed_stages = {
+                stage_id
+                for stage_id, _, _ in PIPELINE
+            }
+
+            render_pipeline(completed=completed_stages)
+
+            with process_placeholder.container():
+
+                st.markdown("### 💻 Current Process")
+                st.success("✓ Pipeline completed successfully")
+
+            # =================================================
+            # RESULTS
+            # =================================================
+
+            with result_placeholder.container():
+
+                st.markdown("### 🎯 Results")
+
+                fabric_col, defect_col = st.columns(2)
+
+                # ---------------------------------------------
+                # FABRIC
+                # ---------------------------------------------
+
+                with fabric_col:
+
+                    st.markdown("#### 🧵 Fabric")
+                    st.success(results["fabric"])
+                    st.metric("Confidence", f"{results['fabric_confidence'] * 100:.2f}%",)
+                    st.progress(results["fabric_confidence"])
+
+                # ---------------------------------------------
+                # DEFECT
+                # ---------------------------------------------
+
+                with defect_col:
+
+                    st.markdown("#### 🔧 Defect")
+                    st.warning(results["defect"])
+                    st.metric("Confidence", f"{results['defect_confidence'] * 100:.2f}%",)
+                    st.progress(results["defect_confidence"])
 
                 st.divider()
-                st.subheader("🧵 Fabric Class Probabilities")
-                fabric_probabilities = results["fabric_probabilities"]
-
-                for class_name, probability in sorted(fabric_probabilities.items(), key=lambda item: item[1], reverse=True)[:5]:
-                    st.write(
-                        f"{class_name}: "
-                        f"{probability * 100:.2f}%"
-                    )
-                    st.progress(probability)
-
 
                 # =================================================
-                # DEFECT PROBABILITIES
+                # PROBABILITIES
                 # =================================================
 
-                st.divider()
-                st.subheader("🔧 Defect Class Probabilities")
-                defect_probabilities = results["defect_probabilities"]
+                probability_col1, probability_col2 = st.columns(2)
 
-                for class_name, probability in sorted(defect_probabilities.items(), key=lambda item: item[1], reverse=True)[:5]:
+                with probability_col1:
 
-                    st.write(
-                        f"{class_name}: "
-                        f"{probability * 100:.2f}%"
-                    )
-                    st.progress(probability)
+                    st.markdown("#### 🧵 Top Fabric Probabilities")
 
-                # =================================================
-                # MODEL INFORMATION
-                # =================================================
+                    fabric_probabilities = (results["fabric_probabilities"])
 
+                    top_fabrics = sorted(fabric_probabilities.items(), key=lambda item: item[1], reverse=True,)[:5]
+
+                    for class_name, probability in top_fabrics:
+
+                        st.write(
+                            f"**{class_name}** — "
+                            f"{probability * 100:.2f}%"
+                        )
+
+                        st.progress(probability)
+
+                with probability_col2:
+
+                    st.markdown("#### 🔧 Top Defect Probabilities")
+
+                    defect_probabilities = (results["defect_probabilities"])
+
+                    top_defects = sorted(defect_probabilities.items(), key=lambda item: item[1], reverse=True,)[:5]
+
+                    for class_name, probability in top_defects:
+
+                        st.write(
+                            f"**{class_name}** — "
+                            f"{probability * 100:.2f}%"
+                        )
+                        st.progress(probability)
                 st.divider()
                 st.caption(f"Model: {model_name}")
                 st.caption("Task: Fabric Material and Defect Classification")
-                st.caption("Fabric Classes: 11")
-                st.caption("Defect Classes: 11")
+                st.caption("Fabric classes: 11 | Defect classes: 11")
 
+        else:
 
-            else:
+            with process_placeholder.container():
+
+                st.markdown("### 💻 Current Process")
+
                 st.info(
-                    "Click **Analyze Image** "
-                    "to get predictions."
+                    "Upload an image and click "
+                    "**Analyze Image** to start the pipeline."
                 )
 
 else:
-    st.info("Please upload an image to get predictions.")
+    
+    st.info("👆 Upload a fabric image above to start.")
