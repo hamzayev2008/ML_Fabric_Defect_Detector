@@ -332,7 +332,7 @@ The application allows the user to:
 Run the application with:
 
 ```powershell
-streamlit run src/app.py
+python -m streamlit run src/app.py
 ```
 
 ---
