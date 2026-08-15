@@ -325,7 +325,7 @@ Test set size:
 2,290 images
 ```
 
-The lower defect accuracy compared with validation accuracy is expected because the test set is an independent evaluation set.
+The test defect accuracy is lower than the validation accuracy on this split. Since the test set is an independent evaluation set, this difference provides a more realistic estimate of generalization performance.
 
 ---
 
@@ -364,7 +364,7 @@ Evaluation logic is centralized in:
 src/evaluation.py
 ```
 
-Both validation and evaluation can use the same core evaluation function.
+Both validation and test evaluation use the same core evaluation function from evaluation.py.
 
 This avoids maintaining separate copies of:
 
