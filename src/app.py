@@ -97,6 +97,7 @@ with control_col3:
 PIPELINE = [
     ("prepare_image", "📷", "Input / Preprocessing"),
     ("load_model", "🧠", "Load Model"),
+    ("domain_gate", "🛡️", "Input Validation"),
     ("resnet", "⚡", "ResNet Feature Extraction"),
     ("fabric", "🧵", "Fabric Classification"),
     ("defect", "🔧", "Defect Classification"),
@@ -257,6 +258,32 @@ if uploaded_file is not None:
             # ------------------------------------------------
 
             results = predict(image, model_name.lower(), progress_callback=update_stage,)
+            
+            if not results["valid_input"]:
+                
+                ("domain_reject", "❌", "Input Rejected"),
+
+                with result_placeholder.container():
+
+                    st.error(
+                        "❌ Unsupported Image"
+                    )
+
+                    st.write(
+                        "The uploaded image does not appear "
+                        "to be a valid fabric image."
+                    )
+
+                    st.metric(
+                        "Domain confidence",
+                        f"{results['domain_confidence'] * 100:.2f}%"
+                    )
+
+                    st.caption(
+                        "Please upload an image of fabric."
+                    )
+
+                st.stop()
 
             # ------------------------------------------------
             # FINISHED
