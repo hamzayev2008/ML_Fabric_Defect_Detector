@@ -3,13 +3,11 @@ import random
 import shutil
 import math
 
-SOURCE_DIR = Path(
-    r"C:\Users\user\Downloads\256_ObjectCategories\256_ObjectCategories"
-)
+SOURCE_DIR = Path(r"C:\Users\user\Downloads\domain_dataset\caltech256_filtered")
 
-OUTPUT_DIR = Path("domain_dataset/non_fabric")
+OUTPUT_DIR = Path(r"C:\Users\user\Documents\GitHub\ML_Fabric_Defect_Detector\domain_dataset\non_fabric")
 
-TARGET_IMAGES = 15_000
+TARGET_IMAGES = 15_104
 SEED = 42
 
 IMAGE_EXTENSIONS = {
