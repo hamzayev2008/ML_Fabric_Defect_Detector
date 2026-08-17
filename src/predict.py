@@ -17,7 +17,7 @@ MODEL_PATHS = {
     "resnet50": MODEL_RESNET50_PATH,
 }
 
-DOMAIN_MODEL_PATH = "domain_gate_resnet18.pth"
+DOMAIN_MODEL_PATH = "domain_gate_resnet18_v2.pth"
 
 
 def load_model(model_name, device, progress_callback=None):
