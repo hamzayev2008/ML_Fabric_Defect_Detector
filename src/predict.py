@@ -8,7 +8,7 @@ from src.config import (
     FABRIC_CLASSES,
     DEFECT_CLASSES,
 )
- from huggingface_hub import hf_hub_download
+from huggingface_hub import hf_hub_download
 from src.model import FabricDefectClassifier
 from src.domain_model import DomainClassifier
 
@@ -20,6 +20,13 @@ MODEL_PATHS = {
 
 DOMAIN_MODEL_PATH = "domain_gate_resnet18_v2.pth"
 
+HF_MODEL_REPO = "FazliddinHamzayev/ML_Fabric_Defect_Models"
+
+def ensure_weight(filename):
+    if not os.path.exists(filename):
+        path = hf_hub_download(repo_id=HF_MODEL_REPO, filename=filename)
+        shutil.copy(path, filename)
+    return filename
 
 def load_model(model_name, device, progress_callback=None):
 
@@ -39,7 +46,7 @@ def load_model(model_name, device, progress_callback=None):
     model = FabricDefectClassifier(model_name)
 
     state_dict = torch.load(
-        MODEL_PATHS[model_name],
+        ensure_weight(MODEL_PATHS[model_name]),
         map_location=device
     )
 
@@ -62,7 +69,7 @@ def load_domain_model(device, progress_callback=None):
     model = DomainClassifier().to(device)
 
     state_dict = torch.load(
-        DOMAIN_MODEL_PATH,
+        ensure_weight(DOMAIN_MODEL_PATH),
         map_location=device
     )
 
