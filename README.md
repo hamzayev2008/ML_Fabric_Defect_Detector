@@ -316,7 +316,7 @@ The inference module is used by the Streamlit application.
 The interactive application is implemented in:
 
 ```text
-python -m streamlit src/app.py
+python -m streamlit run src/app.py
 ```
 
 The application allows the user to:
