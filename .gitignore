@@ -46,4 +46,5 @@ Thumbs.db
 
 # Dataset
 fabric_dataset/
-*.pth
+hf_space_copy/
+domain_dataset/
