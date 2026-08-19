@@ -18,3 +18,5 @@ tqdm
 ultralytics
 
 streamlit
+
+huggingface_hub
