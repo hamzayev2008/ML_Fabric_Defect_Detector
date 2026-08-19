@@ -1,3 +1,8 @@
+import sys
+import os
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import time
 import streamlit as st
 from src.image_utils import load_image_from_bytes
