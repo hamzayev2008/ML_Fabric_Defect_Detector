@@ -41,7 +41,7 @@ ML_Fabric_Defect_Detector/
 └── requirements.txt
 ```
 
-```markdown
+```md
 assets/
 ```
 Contains project assets used for documentation or presentation.
