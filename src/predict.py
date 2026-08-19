@@ -1,13 +1,14 @@
 import torch
+import os
+import shutil
 import torch.nn.functional as F
-
 from src.config import (
     MODEL_RESNET18_PATH,
     MODEL_RESNET50_PATH,
     FABRIC_CLASSES,
     DEFECT_CLASSES,
 )
-
+ from huggingface_hub import hf_hub_download
 from src.model import FabricDefectClassifier
 from src.domain_model import DomainClassifier
 
