@@ -17,4 +17,4 @@ tqdm
 
 ultralytics
 
-Streamlit
+streamlit
