@@ -72,7 +72,7 @@ The preparation process includes:
 * checking image files
 * converting images to the required format
 * preparing the dataset splits
-* 
+  
 # 3. Train / Validation / Test Split
 
 The dataset is divided into three independent subsets:
