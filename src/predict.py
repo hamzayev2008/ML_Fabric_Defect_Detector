@@ -73,7 +73,7 @@ def load_domain_model(device, progress_callback=None):
         map_location=device
     )
 
-    model.load_state_dict(state_dict)
+    model.model.load_state_dict(state_dict)
 
     model.eval()
 
