@@ -20,7 +20,7 @@ MODEL_PATHS = {
 
 DOMAIN_MODEL_PATH = "domain_gate_resnet18_v2.pth"
 
-HF_MODEL_REPO = "FazliddinHamzayev/ML_Fabric_Defect_Models"
+HF_MODEL_REPO = "FazliddinHamzayev/ML_Fabric_Defect_Detector_Models"
 
 def ensure_weight(filename):
     if not os.path.exists(filename):
