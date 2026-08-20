@@ -101,8 +101,8 @@ with control_col3:
 
 PIPELINE = [
     ("prepare_image", "📷", "Input / Preprocessing"),
-    ("load_model", "🧠", "Load Model"),
     ("domain_gate", "🛡️", "Input Validation"),
+    ("load_model", "🧠", "Load Model"),
     ("resnet", "⚡", "ResNet Feature Extraction"),
     ("fabric", "🧵", "Fabric Classification"),
     ("defect", "🔧", "Defect Classification"),
