@@ -3,7 +3,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import time
+import time, torch
 import streamlit as st
 from src.image_utils import load_image_from_bytes
 from src.predict import predict
@@ -228,13 +228,30 @@ if uploaded_file is not None:
 
             completed_stages = set()
 
-            transform = get_transform(augmentation=False)
+            stage_times = {}
+            active_stage = {}
+            use_cuda = torch.cuda.is_available()
+
+            def finish_stage():
+                if not active_stage:
+                    return
+
+                stage_id = active_stage["id"]
+
+                if use_cuda and stage_id != "prepare_image":
+                    torch.cuda.synchronize()
+
+                elapsed = time.perf_counter() - active_stage["started_at"]
+                stage_times[stage_id] = elapsed * 1000
+                active_stage.clear()
 
             # ------------------------------------------------
             # CALLBACK
             # ------------------------------------------------
 
             def update_stage(stage_id, message):
+                
+                finish_stage()
 
                 completed_stages.add(stage_id)
 
@@ -249,12 +266,18 @@ if uploaded_file is not None:
                 # Small delay makes the stages visible
                 # without creating an artificial long animation.
                 time.sleep(0.15)
+                
+                if stage_id != "domain_reject":
+                    active_stage["id"] = stage_id
+                    active_stage["started_at"] = time.perf_counter()
 
             # ------------------------------------------------
             # PREPARE IMAGE
             # ------------------------------------------------
 
             update_stage("prepare_image", "Preparing uploaded image...",)
+            
+            transform = get_transform(augmentation=False)
 
             image = load_image_from_bytes(image_bytes, image_size=IMAGE_SIZE, transform=transform,)
 
@@ -263,6 +286,14 @@ if uploaded_file is not None:
             # ------------------------------------------------
 
             results = predict(image, model_name.lower(), progress_callback=update_stage,)
+            
+            finish_stage()
+
+            st.table([
+                {"Stage": title, "Time (ms)": round(stage_times[stage_id], 2)}
+                for stage_id, _, title in PIPELINE
+                if stage_id in stage_times
+            ])
             
             if not results["valid_input"]:
                 
